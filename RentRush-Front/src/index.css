@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;700&family=Playfair+Display:wght@400;700&family=Lobster&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.background{
+    background-image: url("/src/assets/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.background1{
+    background-image: url("/src/assets/background.png");
+    background-size: contain;
+}
+.bg{
+    background-image: url(/src/assets/city.png);
+}
+.bgred{
+    background-image: url(/src/assets/choose/bg.png);
+
+/* @media screen and (max-width: 640px) {
+      .main {
+        padding: 0;
+      }
+    } */
+     
+}/* Container for testimonials */
+
+.transition-container {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .transition-container.next {
+    transform: translateX(-100%);
+  }
+  
+  .transition-container.prev {
+    transform: translateX(100%);
+  }
+  
+  
