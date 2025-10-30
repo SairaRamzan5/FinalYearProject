@@ -161,6 +161,12 @@ import {
   Getinvoice,
   getshowroomcar,
   getInvoicesForShowroom,
+   getShowroomProfile,
+  updateShowroomProfile,
+  uploadShowroomImage,
+  uploadRegistrationDoc,
+  getPublicShowroom,
+  getShowroomDocuments,
   verifyEmail // MAKE SURE THIS IS IMPORTED
 } from "../Controller/users.js";
 import { showAllShowRooms } from "../Controller/showRoom.js";
@@ -221,4 +227,11 @@ router.get("/get-showroom-invoice", verifyToken, getInvoicesForShowroom);
 router.get("/test", verifyToken, test);
 router.get("/showrooms", showAllShowRooms);
 router.get("/getshowroomcar/:showroomid", verifyToken, getshowroomcar);
+// Showroom Profile Routes
+router.get("/showroom/profile", verifyToken, getShowroomProfile);
+router.put("/showroom/profile", verifyToken, updateShowroomProfile);
+router.post("/showroom/upload-image", verifyToken, upload.single('profileImage'), uploadShowroomImage);
+router.post("/showroom/upload-document", verifyToken, upload.single('document'), uploadRegistrationDoc);
+router.get("/showroom/public/:id", getPublicShowroom);
+router.get("/showroom/documents/:id", getShowroomDocuments);
 export default router;

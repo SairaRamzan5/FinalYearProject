@@ -42,6 +42,7 @@ const Signup = new mongoose.Schema(
       required: true,
     },
     images: [{ type: String }],
+    description: { type: String }, // ADD THIS FIELD
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
     

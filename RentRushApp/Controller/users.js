@@ -3317,3 +3317,216 @@ export const getshowroomcar = async (req, res) => {
     });
   }
 };
+
+// Add these new controller functions to your users.js controller file
+
+// Get Showroom Profile
+export const getShowroomProfile = async (req, res) => {
+  try {
+    const user = await signup.findById(req.user).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Showroom not found' });
+    }
+
+    if (user.role !== 'showroom') {
+      return res.status(403).json({ message: 'Access denied. Showroom role required.' });
+    }
+
+    res.json({ 
+      showroom: {
+        showroomName: user.showroomName,
+        ownerName: user.ownerName,
+        email: user.email,
+        contactNumber: user.contactNumber,
+        address: user.address,
+        cnic: user.cnic,
+        profileImage: user.images && user.images.length > 0 ? user.images[0] : '',
+        documents: user.images && user.images.length > 1 ? user.images.slice(1) : [],
+        description: user.description || ''
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update Showroom Profile
+export const updateShowroomProfile = async (req, res) => {
+  try {
+    const { showroomName, ownerName, address, contactNumber, description } = req.body;
+    
+    const user = await signup.findById(req.user);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Showroom not found' });
+    }
+
+    if (user.role !== 'showroom') {
+      return res.status(403).json({ message: 'Access denied. Showroom role required.' });
+    }
+
+    // Check if showroomName is being changed and if it's unique
+    if (showroomName && showroomName !== user.showroomName) {
+      const existingShowroom = await signup.findOne({ 
+        showroomName, 
+        _id: { $ne: req.user } 
+      });
+      if (existingShowroom) {
+        return res.status(400).json({ message: 'Showroom name already exists' });
+      }
+    }
+
+    const updatedUser = await signup.findByIdAndUpdate(
+      req.user,
+      { 
+        showroomName,
+        ownerName, 
+        address, 
+        contactNumber,
+        description,
+        updatedAt: Date.now()
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.json({ 
+      message: 'Profile updated successfully', 
+      showroom: updatedUser 
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Upload Showroom Image
+export const uploadShowroomImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const user = await signup.findById(req.user);
+    
+    if (!user || user.role !== 'showroom') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+    
+    // Update images array - first image is profile image, rest are documents
+    const updatedImages = [imageUrl, ...(user.images || []).slice(1)];
+    
+    await signup.findByIdAndUpdate(req.user, { images: updatedImages });
+
+    res.json({ 
+      message: 'Profile image uploaded successfully',
+      imageUrl 
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Upload Registration Document
+export const uploadRegistrationDoc = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const user = await signup.findById(req.user);
+    
+    if (!user || user.role !== 'showroom') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const documentUrl = `/uploads/${req.file.filename}`;
+    
+    // Add document to images array (after profile image)
+    const updatedImages = user.images || [];
+    if (updatedImages.length === 0) {
+      // If no profile image, add empty string as placeholder and then document
+      updatedImages.push('', documentUrl);
+    } else {
+      updatedImages.push(documentUrl);
+    }
+    
+    await signup.findByIdAndUpdate(req.user, { images: updatedImages });
+
+    res.json({ 
+      message: 'Document uploaded successfully',
+      document: {
+        url: documentUrl,
+        originalName: req.file.originalname,
+        uploadedAt: new Date()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get Public Showroom Data
+export const getPublicShowroom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const showroom = await signup.findById(id)
+      .select('showroomName ownerName email contactNumber address description images profileImage operatingHours yearsOfExperience createdAt updatedAt');
+    
+    if (!showroom) {
+      return res.status(404).json({ message: 'Showroom not found' });
+    }
+
+    // Transform the data for frontend
+    const showroomData = {
+      showroomName: showroom.showroomName,
+      ownerName: showroom.ownerName,
+      email: showroom.email,
+      contactNumber: showroom.contactNumber,
+      address: showroom.address,
+      description: showroom.description,
+      profileImage: showroom.profileImage,
+      images: showroom.images || [],
+      operatingHours: showroom.operatingHours,
+      yearsOfExperience: showroom.yearsOfExperience,
+      createdAt: showroom.createdAt,
+      updatedAt: showroom.updatedAt
+    };
+
+    res.json({ showroom: showroomData });
+  } catch (error) {
+    console.error("Error fetching public showroom:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Add to your users.js controller
+export const getShowroomDocuments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const showroom = await signup.findById(id)
+      .select('images documents');
+    
+    if (!showroom) {
+      return res.status(404).json({ message: 'Showroom not found' });
+    }
+
+    // Extract documents from images array (assuming documents start from index 1)
+    const documents = showroom.images && showroom.images.length > 1 
+      ? showroom.images.slice(1).map((url, index) => ({
+          url,
+          originalName: `Document ${index + 1}`,
+          uploadedAt: showroom.updatedAt
+        }))
+      : [];
+
+    res.json({ documents });
+  } catch (error) {
+    console.error("Error fetching showroom documents:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
