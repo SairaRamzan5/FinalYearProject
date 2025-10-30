@@ -91,4 +91,6 @@ router.get("/:id/download-paid", async (req, res) => {
 // In your routes file
 router.get('/getinvoice', getCustomerInvoices); // Updated to use new function
 
+router.get("/get-showroom-invoice", getShowroomInvoices);
+
 export default router;

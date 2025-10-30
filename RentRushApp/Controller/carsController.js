@@ -2038,6 +2038,113 @@ export const startMaintenance = async (req, res) => {
   }
 };
 
+// // Set car status to "Available" after maintenance
+// export const completeMaintenance = async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     if (req.role !== "showroom") {
+//       return res
+//         .status(403)
+//         .json("Access denied. Only showroom owners can complete maintenance");
+//     }
+
+//     const car = await car_Model.findById(id).populate("rentalInfo");
+//     if (!car) return res.status(404).json({ message: "Car not found" });
+
+//     const booking = await Booking.findById(car.rentalInfo._id);
+//     const showroom = await signup.findById(booking.showroomId);
+//     const user = await signup.findById(booking.userId);
+
+//     // Set to pending payment so it appears in payments page
+//     booking.status = "pending payment";
+//     car.availability = "Pending Payment";
+
+//     // ✅✅✅ MAINTENANCE COMPLETE EMAIL
+//     if (user) {
+//       const transporter = nodemailer.createTransport({
+//         service: "gmail",
+//         auth: {
+//           user: process.env.EMAIL_USER,
+//           pass: process.env.EMAIL_PASS,
+//         },
+//       });
+
+//       // Maintenance Complete Email Template
+//       const maintenanceCompleteTemplate = `
+//         <!DOCTYPE html>
+//         <html>
+//         <head>
+//             <style>
+//                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+//                 .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+//                 .header { background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+//                 .content { padding: 20px; }
+//                 .footer { background: #f4f4f4; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; }
+//                 .details { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0; }
+//             </style>
+//         </head>
+//         <body>
+//             <div class="container">
+//                 <div class="header">
+//                     <h1>🚗 Maintenance Completed</h1>
+//                     <p>Your vehicle is ready for pickup!</p>
+//                 </div>
+//                 <div class="content">
+//                     <h2>Dear ${user.ownerName || 'Customer'},</h2>
+//                     <p>We're pleased to inform you that the maintenance for your rented vehicle has been completed successfully.</p>
+                    
+//                     <div class="details">
+//                         <h3>Vehicle Details:</h3>
+//                         <p><strong>Car:</strong> ${car.carBrand} ${car.carModel} (${car.year})</p>
+//                         <p><strong>Plate Number:</strong> ${car.plateNumber}</p>
+//                         <p><strong>Maintenance Completed On:</strong> ${new Date().toLocaleDateString()}</p>
+//                     </div>
+
+//                     <p>The vehicle is now ready for your use. Please proceed with the payment to complete the process.</p>
+                    
+//                     <p><strong>Next Steps:</strong></p>
+//                     <ul>
+//                         <li>Review the maintenance details</li>
+//                         <li>Complete the payment process</li>
+//                         <li>Collect your vehicle from the showroom</li>
+//                     </ul>
+//                 </div>
+//                 <div class="footer">
+//                     <p>Thank you for choosing our service!</p>
+//                     <p><strong>${showroom?.showroomName || 'Car Rental Service'}</strong></p>
+//                     <p>Contact: ${showroom?.contactNumber || 'N/A'} | Email: ${showroom?.email || 'N/A'}</p>
+//                 </div>
+//             </div>
+//         </body>
+//         </html>
+//       `;
+
+//       const mailOptions = {
+//         from: process.env.EMAIL_USER,
+//         to: user.email,
+//         subject: `Maintenance Completed - ${car.carBrand} ${car.carModel}`,
+//         html: maintenanceCompleteTemplate,
+//         text: `Dear ${user.ownerName || 'Customer'},\n\nMaintenance for your vehicle ${car.carBrand} ${car.carModel} (${car.plateNumber}) has been completed successfully.\n\nThe vehicle is now ready for pickup. Please complete the payment process.\n\nThank you!\n${showroom?.showroomName || 'Car Rental Service'}`
+//       };
+
+//       await transporter.sendMail(mailOptions);
+//       console.log('✅ Maintenance completion email sent to:', user.email);
+//     }
+
+//     await car.save();
+//     await booking.save();
+
+//     res.status(200).json({ 
+//       message: "Maintenance completed. Car is now pending payment and customer notified.", 
+//       car 
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// };
+
 // Set car status to "Available" after maintenance
 export const completeMaintenance = async (req, res) => {
   const { id } = req.params;
@@ -2053,90 +2160,19 @@ export const completeMaintenance = async (req, res) => {
     if (!car) return res.status(404).json({ message: "Car not found" });
 
     const booking = await Booking.findById(car.rentalInfo._id);
-    const showroom = await signup.findById(booking.showroomId);
-    const user = await signup.findById(booking.userId);
 
     // Set to pending payment so it appears in payments page
     booking.status = "pending payment";
     car.availability = "Pending Payment";
 
-    // ✅✅✅ MAINTENANCE COMPLETE EMAIL
-    if (user) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      // Maintenance Complete Email Template
-      const maintenanceCompleteTemplate = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
-                .header { background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
-                .content { padding: 20px; }
-                .footer { background: #f4f4f4; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; }
-                .details { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>🚗 Maintenance Completed</h1>
-                    <p>Your vehicle is ready for pickup!</p>
-                </div>
-                <div class="content">
-                    <h2>Dear ${user.ownerName || 'Customer'},</h2>
-                    <p>We're pleased to inform you that the maintenance for your rented vehicle has been completed successfully.</p>
-                    
-                    <div class="details">
-                        <h3>Vehicle Details:</h3>
-                        <p><strong>Car:</strong> ${car.carBrand} ${car.carModel} (${car.year})</p>
-                        <p><strong>Plate Number:</strong> ${car.plateNumber}</p>
-                        <p><strong>Maintenance Completed On:</strong> ${new Date().toLocaleDateString()}</p>
-                    </div>
-
-                    <p>The vehicle is now ready for your use. Please proceed with the payment to complete the process.</p>
-                    
-                    <p><strong>Next Steps:</strong></p>
-                    <ul>
-                        <li>Review the maintenance details</li>
-                        <li>Complete the payment process</li>
-                        <li>Collect your vehicle from the showroom</li>
-                    </ul>
-                </div>
-                <div class="footer">
-                    <p>Thank you for choosing our service!</p>
-                    <p><strong>${showroom?.showroomName || 'Car Rental Service'}</strong></p>
-                    <p>Contact: ${showroom?.contactNumber || 'N/A'} | Email: ${showroom?.email || 'N/A'}</p>
-                </div>
-            </div>
-        </body>
-        </html>
-      `;
-
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject: `Maintenance Completed - ${car.carBrand} ${car.carModel}`,
-        html: maintenanceCompleteTemplate,
-        text: `Dear ${user.ownerName || 'Customer'},\n\nMaintenance for your vehicle ${car.carBrand} ${car.carModel} (${car.plateNumber}) has been completed successfully.\n\nThe vehicle is now ready for pickup. Please complete the payment process.\n\nThank you!\n${showroom?.showroomName || 'Car Rental Service'}`
-      };
-
-      await transporter.sendMail(mailOptions);
-      console.log('✅ Maintenance completion email sent to:', user.email);
-    }
+    // ❌❌❌ EMAIL SENDING REMOVED FROM COMPLETE MAINTENANCE
+    // No email notification when maintenance is completed
 
     await car.save();
     await booking.save();
 
     res.status(200).json({ 
-      message: "Maintenance completed. Car is now pending payment and customer notified.", 
+      message: "Maintenance completed. Car is now pending payment.", 
       car 
     });
   } catch (error) {
@@ -2144,6 +2180,7 @@ export const completeMaintenance = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
 
 // NEW: Payment Confirmation Function with Email
 export const confirmPayment = async (req, res) => {

@@ -91,7 +91,7 @@ const ExploreCars = () => {
             Explore Our Car Collection
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse our complete collection of rental cars. Sign in to book your favorite vehicle instantly.
+            Browse our complete collection of rental cars. Sign in to book your favorite car instantly.
           </p>
           
           {/* Guest User Notice */}

@@ -1460,7 +1460,7 @@ const UserCard = ({ car, handleRefetch }) => {
             <div>
               <p className="text-sm text-[#C17D3C]">Daily Rental Rate</p>
               <p className="text-2xl font-bold text-[#00004b]">
-                {car.rentRate} rs/Day
+                {car.rentRate} Rs/Day
               </p>
             </div>
             <button 
@@ -1646,7 +1646,7 @@ const UserCard = ({ car, handleRefetch }) => {
       {/* Car Details Section */}
       <div className="mb-8">
         <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <FiCheckCircle className="mr-2 text-green-600" /> Vehicle Information
+          <FiCheckCircle className="mr-2 text-green-600" /> Car Information
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

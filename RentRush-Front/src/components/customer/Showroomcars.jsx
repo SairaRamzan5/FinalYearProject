@@ -151,7 +151,7 @@ function Showroomcars() {
                 {filter === "available" ? "Available Cars" : "Rented Out Cars"}
               </h2>
               <p className="text-gray-600">
-                {filteredCars.length} {filteredCars.length === 1 ? "vehicle" : "Cars"} found
+                {filteredCars.length} {filteredCars.length === 1 ? "Car" : "Cars"} found
               </p>
             </div>
 
@@ -221,7 +221,7 @@ function Showroomcars() {
               <div className="border-l-4 border-blue-500 pl-4">
                 <h3 className="font-bold text-gray-800 mb-2">Maintenance Services</h3>
                 <p className="text-gray-600">
-                  Comprehensive maintenance and repair services to keep your vehicle in top condition.
+                  Comprehensive maintenance and repair services to keep your Cars in top condition.
                 </p>
               </div>
               <div className="border-l-4 border-blue-500 pl-4">

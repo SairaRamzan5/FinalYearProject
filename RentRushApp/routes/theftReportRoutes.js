@@ -25,4 +25,5 @@ router.get("/customer", getTheftReportsByCustomerQuery);
 // POST /api/theft-report/customer -> get customer-specific theft reports (using request body)
 router.post("/customer-reports", getTheftReportsByCustomer);
 
+
 export default router;
