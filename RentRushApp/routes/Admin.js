@@ -6,6 +6,7 @@ import {
   BanShowroom,
   Show_BanShow_Room,
   Active_Show_Room,
+  getShowroomActiveBookingsCount
 } from "../Controller/Adminview.js";
 import {
   approveShowroom,
@@ -19,4 +20,6 @@ router.get("/viewBanUser", Show_BanShow_Room);
 router.patch("/activeshowroom", Active_Show_Room);
 router.get("/pending-approver-showrooms", getPendingShowrooms);
 router.put("/approve/:id", approveShowroom);
+// Add this route for admin
+router.get('/admin/active-bookings/:showroomid', getShowroomActiveBookingsCount);
 export default router;

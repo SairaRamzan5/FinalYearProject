@@ -169,6 +169,9 @@
 import Status_Model from "../Model/showroomStatus.js";
 import signup from "../Model/signup.js";
 import nodemailer from "nodemailer";
+import Car from "../Model/Car.js";
+import Booking from "../Model/bookingModel.js";
+
 
 export const Adminview = async (req, res) => {
   const Admin_view = await signup.aggregate([
@@ -240,25 +243,105 @@ export const Adminview = async (req, res) => {
   });
 };
 
+// export const BanShowroom = async (req, res) => {
+//   const { showroomid } = req.params;
+//   // console.log(showroomid)
+//   try {
+//     const showroom = await signup.findById(showroomid);
+//     // console.log(showroom)
+//     const exist_ban = await Status_Model.findOne({
+//       showroomId: showroomid,
+//     });
+//     if (exist_ban) {
+//       if (exist_ban?.status === "banned") {
+//         exist_ban.status = "active";
+//         await exist_ban.save();
+//         return res.status(200).json({ msg: "Activated successfully" });
+//       }
+
+//       if (exist_ban?.status === "active") {
+//         exist_ban.status = "banned";
+//         await exist_ban.save();
+//         return res.status(200).json({ msg: "Banned successfully" });
+//       }
+//     } else {
+//       const newStatus = new Status_Model({
+//         showroomId: showroomid,
+//         status: "banned",
+//       });
+//       await newStatus.save();
+//     }
+//     return res.status(200).json({ msg: "Banned successfully" });
+//   } catch (error) {
+//     return res.status(500).json({ msg: "Error banning", error: error.message });
+//   }
+// };
+
 export const BanShowroom = async (req, res) => {
   const { showroomid } = req.params;
-  // console.log(showroomid)
+  
   try {
+    console.log(`🚫 Attempting to ban showroom: ${showroomid}`);
+
+    // First check if showroom has active bookings
+    const showroomCars = await Car.find({ userId: showroomid }).select("_id");
+    console.log(`🚗 Found ${showroomCars.length} cars for showroom ${showroomid}`);
+    
+    const carIds = showroomCars.map(car => car._id);
+    
+    let activeBookings = [];
+    if (carIds.length > 0) {
+      activeBookings = await Booking.find({
+        carId: { $in: carIds },
+        status: { 
+          $in: [
+            'confirmed', 
+            'active', 
+            'ongoing', 
+            'pending', 
+            'approved',
+            'pending payment',
+            'return initiated'
+          ] 
+        }
+      });
+      
+      console.log(`📊 Found ${activeBookings.length} active bookings for showroom ${showroomid}`);
+      
+      // Log active booking details for debugging
+      activeBookings.forEach((booking, index) => {
+        console.log(`  📝 Active Booking ${index + 1}:`, {
+          id: booking._id,
+          status: booking.status,
+          carId: booking.carId,
+          dates: `${booking.rentalStartDate} to ${booking.rentalEndDate}`
+        });
+      });
+    }
+
+    if (activeBookings.length > 0) {
+      return res.status(400).json({
+        msg: `Cannot ban showroom. It has ${activeBookings.length} active booking(s). Please wait for all bookings to complete.`
+      });
+    }
+
     const showroom = await signup.findById(showroomid);
-    // console.log(showroom)
     const exist_ban = await Status_Model.findOne({
       showroomId: showroomid,
     });
+    
     if (exist_ban) {
       if (exist_ban?.status === "banned") {
         exist_ban.status = "active";
         await exist_ban.save();
+        console.log(`✅ Showroom ${showroomid} activated successfully`);
         return res.status(200).json({ msg: "Activated successfully" });
       }
 
       if (exist_ban?.status === "active") {
         exist_ban.status = "banned";
         await exist_ban.save();
+        console.log(`✅ Showroom ${showroomid} banned successfully`);
         return res.status(200).json({ msg: "Banned successfully" });
       }
     } else {
@@ -267,13 +350,15 @@ export const BanShowroom = async (req, res) => {
         status: "banned",
       });
       await newStatus.save();
+      console.log(`✅ Showroom ${showroomid} banned successfully (new status record)`);
+      return res.status(200).json({ msg: "Banned successfully" });
     }
-    return res.status(200).json({ msg: "Banned successfully" });
+    
   } catch (error) {
+    console.error("❌ Error banning showroom:", error);
     return res.status(500).json({ msg: "Error banning", error: error.message });
   }
 };
-
 export const Show_BanShow_Room = async (req, res) => {
   try {
     const Ban_Data = await Status_Model.find().populate("showroomId");
@@ -468,5 +553,59 @@ const sendRejectionEmail = async (showroom) => {
     console.log(`✅ Rejection email sent to: ${showroom.email}`);
   } catch (error) {
     console.error("❌ Error sending rejection email:", error);
+  }
+};
+
+// ✅ GET ACTIVE BOOKINGS COUNT FOR ANY SHOWROOM (For Admin)
+export const getShowroomActiveBookingsCount = async (req, res) => {
+  try {
+    const { showroomid } = req.params;
+    console.log("🔍 ADMIN: Checking active bookings for showroom:", showroomid);
+
+    // Step 1: Get all cars belonging to this showroom
+    const showroomCars = await Car.find({ userId: showroomid }).select("_id");
+    const carIds = showroomCars.map(car => car._id);
+    console.log(`🚗 Found ${carIds.length} cars for showroom ${showroomid}`);
+
+    if (carIds.length === 0) {
+      return res.json({
+        success: true,
+        activeBookingsCount: 0,
+        carCount: 0,
+        message: "No cars found for this showroom"
+      });
+    }
+
+    // Step 2: Count ACTIVE bookings for these cars
+    const activeBookingCount = await Booking.countDocuments({
+      carId: { $in: carIds },
+      status: { 
+        $in: [
+          'confirmed', 
+          'active', 
+          'pending', 
+          'approved',
+          'pending payment',
+          'return initiated'
+        ] 
+      }
+    });
+
+    console.log(`📊 ADMIN: Showroom ${showroomid} has ${activeBookingCount} active bookings`);
+
+    res.json({
+      success: true,
+      activeBookingsCount: activeBookingCount,
+      carCount: carIds.length,
+      message: `Found ${activeBookingCount} active bookings for showroom`
+    });
+
+  } catch (error) {
+    console.error("❌ ADMIN: Error checking active bookings:", error);
+    res.status(500).json({
+      success: false,
+      activeBookingsCount: 0,
+      error: error.message
+    });
   }
 };

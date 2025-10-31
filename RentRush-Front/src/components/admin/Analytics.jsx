@@ -291,14 +291,7 @@ const Analytics = ({ customerData, showroomData, onRefresh }) => {
           </div>
 
 
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Showroom Status Distribution
-            </h3>
-            <div className="h-64 max-w-md mx-auto">
-              <Pie data={showroomStatusData} options={chartOptions} />
-            </div>
-          </div>
+       
         </>
       )}
     </div>
