@@ -59,9 +59,9 @@ const ShowroomBookingDialog = ({ isOpen, onClose, booking }) => {
               <span className={`px-3 py-2 rounded-full text-sm font-semibold ${getStatusColor(booking.status)}`}>
                 {(booking.status || 'UPCOMING').toUpperCase()}
               </span>
-              <span className={`px-3 py-2 rounded-full text-sm font-semibold ${getPaymentStatusColor(booking.paymentStatus)}`}>
+              {/* <span className={`px-3 py-2 rounded-full text-sm font-semibold ${getPaymentStatusColor(booking.paymentStatus)}`}>
                 PAYMENT: {(booking.paymentStatus || 'PENDING').toUpperCase()}
-              </span>
+              </span> */}
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold ">PKR {(booking.totalPrice || 0).toLocaleString()}</p>
@@ -413,11 +413,11 @@ const ShowroomBookings = () => {
                         }`}>
                           {status.toUpperCase()}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        {/* <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                           (b.paymentStatus==='paid'||b.paymentStatus==='confirmed')?'bg-green-100 text-green-800':'bg-yellow-100 text-yellow-800'
                         }`}>
                           {(b.paymentStatus || 'PENDING').toUpperCase()}
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                     <div className="p-4">

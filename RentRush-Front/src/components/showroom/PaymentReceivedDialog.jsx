@@ -1930,12 +1930,12 @@ const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }
             )}
             
             {/* Total Amount */}
-            <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
+            {/* <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
               <span className="font-bold text-base">Total Amount:</span>
               <span className="font-bold text-[#C17D3C] text-base">
                 PKR {totalAmount.toLocaleString()}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
 
