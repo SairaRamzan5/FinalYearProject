@@ -667,7 +667,6 @@ import VerifyEmail from './components/VerifyEmail.jsx';
 import ExploreCars from "./components/customer/ExploreCars.jsx";
 import PaymentHistoryPage from "./components/showroom/PaymentHistoryPage.jsx"; 
 import MaintenanceHistoryPage from "./components/showroom/MaintenanceHistoryPage.jsx";
-import ShowroomNotifications from "./components/showroom/ShowroomNotifications.jsx";
 import ShowroomProfile from "./components/showroom/ShowroomProfile.jsx"; // ✅ ADD THIS IMPORT
 
 function App() {
@@ -712,7 +711,6 @@ function App() {
             <Route path="/showroom/invoices" element={<ShowroomInvoiceDashboard />} /> {/* ✅ THIS ROUTE MUST EXIST */}
             <Route path="/showroom/maintenance" element={<CarMaintenancePage />} />
             <Route path="/showroom/maintenance-history" element={<MaintenanceHistoryPage />} />
-            <Route path="/showroom/notifications" element={<ShowroomNotifications />} />
             <Route path="/showroom/profile" element={<ShowroomProfile />} /> {/* ✅ ADDED SHOWROOM PROFILE ROUTE */}
 
             {/* Customer Routes */}

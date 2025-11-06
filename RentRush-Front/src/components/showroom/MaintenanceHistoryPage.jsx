@@ -169,10 +169,44 @@ const MaintenanceHistoryPage = () => {
             </div>
           </div>
 
+          {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Total Maintenance</h3>
+                  <p className="text-2xl font-bold text-gray-800">{filteredLogs.length}</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Total Repair Cost</h3>
+                  <p className="text-2xl font-bold text-[#C17D3C]">
+                    PKR {filteredLogs.reduce((sum, log) => sum + getRepairCost(log.repairCosts), 0).toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+                  <h3 className="text-lg font-semibold text-gray-600">This Month</h3>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {maintenanceLogs.filter(log => {
+                      const logDate = new Date(log.date);
+                      const now = new Date();
+                      return logDate.getMonth() === now.getMonth() && 
+                             logDate.getFullYear() === now.getFullYear();
+                    }).length}
+                  </p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Today</h3>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {maintenanceLogs.filter(log => {
+                      const logDate = new Date(log.date);
+                      return logDate.toDateString() === new Date().toDateString();
+                    }).length}
+                  </p>
+                </div>
+              </div>
+
           {/* Payment History Table */}
           {filteredLogs && filteredLogs.length > 0 ? (
             <>
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden mt-8">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -249,39 +283,7 @@ const MaintenanceHistoryPage = () => {
                 </div>
               </div>
 
-              {/* Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Total Maintenance</h3>
-                  <p className="text-2xl font-bold text-gray-800">{filteredLogs.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Total Repair Cost</h3>
-                  <p className="text-2xl font-bold text-[#C17D3C]">
-                    PKR {filteredLogs.reduce((sum, log) => sum + getRepairCost(log.repairCosts), 0).toLocaleString()}
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
-                  <h3 className="text-lg font-semibold text-gray-600">This Month</h3>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {maintenanceLogs.filter(log => {
-                      const logDate = new Date(log.date);
-                      const now = new Date();
-                      return logDate.getMonth() === now.getMonth() && 
-                             logDate.getFullYear() === now.getFullYear();
-                    }).length}
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Today</h3>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {maintenanceLogs.filter(log => {
-                      const logDate = new Date(log.date);
-                      return logDate.toDateString() === new Date().toDateString();
-                    }).length}
-                  </p>
-                </div>
-              </div>
+              
             </>
           ) : (
             <div className="text-center py-12 bg-white rounded-xl shadow-lg">
@@ -409,10 +411,10 @@ const MaintenanceDetailsModal = ({ log, onClose }) => {
                   <span className="text-sm capitalize">{safeString(task).replace(/([A-Z])/g, ' $1').trim()}</span>
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     isChecked 
-                      ? 'bg-green-100 text-green-800' 
+                      ? 'bg-white text-black' 
                       : 'bg-red-100 text-red-800'
                   }`}>
-                    {isChecked ? 'Completed' : 'Not Completed'}
+                    {isChecked ? 'Done' : 'Need Service'}
                   </span>
                 </div>
               ))}
@@ -429,13 +431,13 @@ const MaintenanceDetailsModal = ({ log, onClose }) => {
             <div className="space-y-3">
               {Object.entries(repairDescriptions).map(([task, description]) => (
                 description && (
-                  <div key={task} className="bg-yellow-50 p-3 rounded-lg">
+                  <div key={task} className=" p-3 rounded-lg">
                     <p className="font-medium text-sm capitalize text-gray-700">
                       {safeString(task).replace(/([A-Z])/g, ' $1').trim()}:
                     </p>
                     <p className="text-sm text-gray-600 mt-1">{safeString(description)}</p>
                     {repairCosts && repairCosts[task] && (
-                      <p className="text-sm font-semibold text-green-600 mt-1">
+                      <p className="text-sm font-semibold  mt-1">
                         Cost: PKR {parseFloat(repairCosts[task] || 0).toLocaleString()}
                       </p>
                     )}
@@ -457,18 +459,18 @@ const MaintenanceDetailsModal = ({ log, onClose }) => {
             <h3 className="font-semibold text-gray-700 mb-3">Repair Costs Breakdown</h3>
             <div className="space-y-2">
               {Object.entries(repairCosts).map(([task, cost]) => (
-                <div key={task} className="flex justify-between items-center bg-green-50 p-3 rounded-lg">
+                <div key={task} className="flex justify-between items-center  p-3 rounded-lg">
                   <span className="text-sm capitalize">
                     {safeString(task).replace(/([A-Z])/g, ' $1').trim()}
                   </span>
-                  <span className="text-sm font-semibold text-green-700">
+                  <span className="text-sm font-semibold ">
                     PKR {parseFloat(cost || 0).toLocaleString()}
                   </span>
                 </div>
               ))}
-              <div className="flex justify-between items-center bg-green-100 p-3 rounded-lg border border-green-200">
+              <div className="flex justify-between items-center  p-3 rounded-lg border ">
                 <span className="font-semibold">Total Repair Cost</span>
-                <span className="font-bold text-green-800">
+                <span className="font-bold ">
                   PKR {totalRepairCost.toLocaleString()}
                 </span>
               </div>

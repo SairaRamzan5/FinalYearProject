@@ -172,7 +172,8 @@ import theftReportRoutes from "./routes/theftReportRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import { startAutoReturnService } from './services/autoReturnService.js';
-import { startBookingReminderService, startBookingStartReminderService } from './services/notificationService.js';
+import { startBookingReminderService } from './services/notificationService.js';
+import ratingRoutes from './routes/ratings.js';
 
 // ✅ IMPORT MODELS TO REGISTER THEM
 import "./Model/signup.js";
@@ -181,6 +182,7 @@ import "./Model/bookingModel.js";
 import "./Model/Notification.js"; // ✅ Notification model register karen
 import "./Model/invoiceModel.js";
 import "./Model/PaymentHistory.js"; // ✅ PaymentHistory model register karen
+
 
 dotenv.config();
 
@@ -225,6 +227,7 @@ app.use("/api/complaints", Complaints);
 app.use("/uploads/complaints", express.static(path.join(process.cwd(), "uploads/complaints")));
 app.use("/api/theft-report", theftReportRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use('/api/showrooms', ratingRoutes);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
@@ -234,7 +237,6 @@ server.listen(PORT, () => {
 // Start background services
 startAutoReturnService();
 startBookingReminderService();
-startBookingStartReminderService();
 
 console.log('⏰ Auto-return service: Immediate returns enabled (no grace period)');
 console.log('🔔 Notification services started successfully');

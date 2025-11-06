@@ -199,10 +199,43 @@ const PaymentHistoryPage = () => {
             </div>
           </div>
 
+
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Total Payments</h3>
+                  <p className="text-2xl font-bold text-gray-800">{filteredPayments.length}</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Total Revenue</h3>
+                  <p className="text-2xl font-bold text-[#C17D3C]">PKR {totalRevenue.toLocaleString()}</p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+                  <h3 className="text-lg font-semibold text-gray-600">This Month</h3>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {payments.filter(p => {
+                      const paymentDate = new Date(p.paymentDate);
+                      const now = new Date();
+                      return paymentDate.getMonth() === now.getMonth() && 
+                             paymentDate.getFullYear() === now.getFullYear();
+                    }).length}
+                  </p>
+                </div>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+                  <h3 className="text-lg font-semibold text-gray-600">Today</h3>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {payments.filter(p => {
+                      const paymentDate = new Date(p.paymentDate);
+                      return paymentDate.toDateString() === new Date().toDateString();
+                    }).length}
+                  </p>
+                </div>
+              </div>
+
           {/* Payment History Table */}
           {filteredPayments && filteredPayments.length > 0 ? (
             <>
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden mt-8">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -282,37 +315,6 @@ const PaymentHistoryPage = () => {
                 </div>
               </div>
 
-              {/* Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Total Payments</h3>
-                  <p className="text-2xl font-bold text-gray-800">{filteredPayments.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Total Revenue</h3>
-                  <p className="text-2xl font-bold text-[#C17D3C]">PKR {totalRevenue.toLocaleString()}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
-                  <h3 className="text-lg font-semibold text-gray-600">This Month</h3>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {payments.filter(p => {
-                      const paymentDate = new Date(p.paymentDate);
-                      const now = new Date();
-                      return paymentDate.getMonth() === now.getMonth() && 
-                             paymentDate.getFullYear() === now.getFullYear();
-                    }).length}
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
-                  <h3 className="text-lg font-semibold text-gray-600">Today</h3>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {payments.filter(p => {
-                      const paymentDate = new Date(p.paymentDate);
-                      return paymentDate.toDateString() === new Date().toDateString();
-                    }).length}
-                  </p>
-                </div>
-              </div>
             </>
           ) : (
             <div className="text-center py-12 bg-white rounded-xl shadow-lg">
