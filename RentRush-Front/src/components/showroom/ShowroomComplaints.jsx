@@ -2818,14 +2818,14 @@ function ShowroomComplaints() {
                           <div className="flex justify-center space-x-2">
                             <button
                               onClick={() => viewComplaintDetails(complaint)}
-                              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
+                              className="px-3 py-1  text-[#C17D3C] rounded  transition-colors font-bold text-sm"
                             >
                               View Details
                             </button>
                             {!complaint.resolved && (
                               <button
                                 onClick={() => openResolutionModal(complaint._id)}
-                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
+                                className="px-3 py-1 bg-[#C17D3C] text-white rounded hover:bg-[#C17D3C] transition-colors text-sm"
                               >
                                 Resolve
                               </button>
@@ -2922,12 +2922,12 @@ function ShowroomComplaints() {
                   </h4>
                   <div className="space-y-2">
                     <p><strong>Email:</strong> 
-                      <span className="ml-2 font-mono text-sm bg-yellow-100 px-2 py-1 rounded">
+                      <span className="ml-2 font-mono text-sm bg-gray-50 px-2 py-1 rounded">
                         {selectedComplaint.email}
                       </span>
                     </p>
                     <p><strong>Contact:</strong> 
-                      <span className="ml-2 font-mono text-sm bg-yellow-100 px-2 py-1 rounded">
+                      <span className="ml-2 font-mono text-sm bg-gray-50 px-2 py-1 rounded">
                         {selectedComplaint.contact || "N/A"}
                       </span>
                     </p>
@@ -2939,7 +2939,7 @@ function ShowroomComplaints() {
               <div className="space-y-4">
                 {/* Car Information */}
                 {selectedComplaint.bookingId?.carId && (
-                  <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-lg mb-3 text-[#394A9A]">
                       Your Car Information
                     </h4>
@@ -2963,7 +2963,7 @@ function ShowroomComplaints() {
 
                 {/* ✅ FIXED: Resolution Details */}
                 {selectedComplaint.resolved && selectedComplaint.resolutionDescription && (
-                  <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="bg-bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-lg mb-3 text-[#394A9A]">
                       Resolution Details
                     </h4>
@@ -3035,7 +3035,7 @@ function ShowroomComplaints() {
               {!selectedComplaint.resolved && (
                 <button
                   onClick={() => openResolutionModal(selectedComplaint._id)}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-[#C17D3C] text-white rounded-lg hover:bg-[#C17D3C] transition-colors"
                 >
                   Mark as Resolved
                 </button>
@@ -3090,7 +3090,7 @@ function ShowroomComplaints() {
               <button
                 onClick={resolveComplaint}
                 disabled={resolving || !resolutionDescription.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-[#C17D3C] text-white rounded-lg hover:bg-[#C17D3C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resolving ? "Resolving..." : "Confirm Resolution"}
               </button>

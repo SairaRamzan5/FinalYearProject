@@ -2174,8 +2174,7 @@ function BookingCard({
                     <option value="">Select Complaint Type</option>
                     <option value="Staff">Staff</option>
                     <option value="Service">Service</option>
-                    <option value="Vehicle">Vehicle</option>
-                    <option value="Billing">Billing</option>
+                   
                   </select>
                   {errors.compl_Against && (
                     <p className="text-red-500 text-xs mt-1">
@@ -2228,7 +2227,7 @@ function BookingCard({
                     <p className="text-red-500 text-xs mt-1">{errors.proof}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    Supported formats: Images, PDF, Word documents
+                    Supported format: Images
                   </p>
                 </div>
 

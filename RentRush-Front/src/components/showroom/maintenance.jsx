@@ -163,7 +163,7 @@ const CarMaintenancePage = () => {
                 Confirm Car Return
               </h3>
               <p className="text-gray-700">
-                Are you sure you want to start maintenance for{" "}
+                Are you sure that the car is in your showroom. {" "}
                 <span className="font-semibold">
                   {selectedCarForConfirmation?.carBrand} {selectedCarForConfirmation?.carModel}
                 </span>

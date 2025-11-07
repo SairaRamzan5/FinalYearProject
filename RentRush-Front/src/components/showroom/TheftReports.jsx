@@ -136,9 +136,9 @@ function TheftReports() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "active": return "bg-green-100 text-green-800";
+      case "active": return "bg-blue-100 text-green-800";
       case "upcoming": return "bg-blue-100 text-blue-800";
-      case "completed": return "bg-gray-100 text-gray-800";
+      case "completed": return "bg-green-100 text-gray-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -164,7 +164,7 @@ function TheftReports() {
               <div className="flex items-center gap-3">
                 <ShieldAlert className="text-red-600" size={28} />
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-800">Theft Report Bookings</h1>
+                  <h1 className="text-2xl font-bold text-gray-800">Theft Reports</h1>
                   <p className="text-gray-600 mt-1">Booking details for vehicles with theft reports</p>
                 </div>
               </div>
@@ -205,7 +205,7 @@ function TheftReports() {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center gap-2">
                   <ShieldAlert className="text-blue-600" size={20} />
                   <p className="text-blue-700 text-sm">
@@ -213,7 +213,7 @@ function TheftReports() {
                     report{reports.length !== 1 ? 's' : ''} for your showroom
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               {reports.map((report) => {
                 const status = getBookingStatus(report);
@@ -228,7 +228,7 @@ function TheftReports() {
                     <div className="flex items-center gap-2 mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                       <ShieldAlert className="text-red-600" size={20} />
                       <div>
-                        <p className="text-red-700 font-medium">🚨 THEFT REPORT SUBMITTED</p>
+                        <p className="text-red-700 font-medium">THEFT REPORT SUBMITTED</p>
                         <p className="text-red-600 text-sm">
                           Reported on: {new Date(report.createdAt || report.reportDate).toLocaleString()}
                         </p>
@@ -295,7 +295,7 @@ function TheftReports() {
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
                           {getStatusText(status)}
                         </span>
-                        
+{/*                         
                         <div className="text-right">
                           <p className="text-lg font-bold text-red-600">
                             🚨 EMERGENCY
@@ -303,7 +303,7 @@ function TheftReports() {
                           <p className="text-sm text-gray-500">
                             Vehicle Reported Stolen
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 

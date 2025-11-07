@@ -1,3 +1,188 @@
+// // // // // // // // import React, { useState } from "react";
+// // // // // // // // import axios from "axios";
+// // // // // // // // import Toast from "../Toast";
+
+// // // // // // // // const Base_Url = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// // // // // // // // const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }) => {
+// // // // // // // //   const [paymentMethod, setPaymentMethod] = useState("");
+// // // // // // // //   const [loading, setLoading] = useState(false);
+
+// // // // // // // //   const normalizePaymentMethod = (value) => {
+// // // // // // // //     if (!value) return "";
+    
+// // // // // // // //     const methodMap = {
+// // // // // // // //       'cash': 'cash',
+// // // // // // // //       'card': 'card', 
+// // // // // // // //       'bank': 'bank',
+// // // // // // // //       'bank transfer': 'bank',
+// // // // // // // //       'jazzcash': 'jazzcash',
+// // // // // // // //       'easypaisa': 'easypaisa'
+// // // // // // // //     };
+    
+// // // // // // // //     return methodMap[value.toLowerCase()] || value;
+// // // // // // // //   };
+
+// // // // // // // //   const handleConfirm = async () => {
+// // // // // // // //     if (!paymentMethod) {
+// // // // // // // //       Toast("Please select a payment method", "error");
+// // // // // // // //       return;
+// // // // // // // //     }
+
+// // // // // // // //     try {
+// // // // // // // //       setLoading(true);
+// // // // // // // //       const method = normalizePaymentMethod(paymentMethod);
+
+// // // // // // // //       // ✅ USE THE CONFIRM-PAYMENT ENDPOINT
+// // // // // // // //       const response = await axios.post(
+// // // // // // // //         `${Base_Url}/api/payments/confirm-payment`,
+// // // // // // // //         { 
+// // // // // // // //           bookingId: bookingId,
+// // // // // // // //           paymentMethod: method 
+// // // // // // // //         },
+// // // // // // // //         { withCredentials: true }
+// // // // // // // //       );
+
+// // // // // // // //       if (response.data.success) {
+// // // // // // // //         Toast("Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.", "success");
+        
+// // // // // // // //         // Call the callback to refresh the parent component
+// // // // // // // //         if (onPaymentSuccess) {
+// // // // // // // //           onPaymentSuccess();
+// // // // // // // //         }
+        
+// // // // // // // //         onClose();
+// // // // // // // //       } else {
+// // // // // // // //         throw new Error(response.data.message || "Payment confirmation failed");
+// // // // // // // //       }
+// // // // // // // //     } catch (err) {
+// // // // // // // //       console.error("Payment confirmation error:", err);
+// // // // // // // //       Toast(
+// // // // // // // //         err.response?.data?.message || err.message || "Failed to confirm payment",
+// // // // // // // //         "error"
+// // // // // // // //       );
+// // // // // // // //     } finally {
+// // // // // // // //       setLoading(false);
+// // // // // // // //     }
+// // // // // // // //   };
+
+// // // // // // // //   // Calculate total amount from carData
+// // // // // // // //   const calculateTotalAmount = () => {
+// // // // // // // //     if (!carData?.rentalInfo) return 0;
+    
+// // // // // // // //     const rentalInfo = carData.rentalInfo;
+// // // // // // // //     const baseAmount = rentalInfo.totalPrice || 0;
+// // // // // // // //     const overdueCharge = rentalInfo.overdueCharge || 0;
+// // // // // // // //     const maintenanceCost = rentalInfo.maintenanceCost || {};
+    
+// // // // // // // //     let maintenanceTotal = 0;
+// // // // // // // //     if (typeof maintenanceCost === 'object') {
+// // // // // // // //       maintenanceTotal = Object.values(maintenanceCost).reduce((sum, cost) => {
+// // // // // // // //         const costNum = parseFloat(cost) || 0;
+// // // // // // // //         return sum + costNum;
+// // // // // // // //       }, 0);
+// // // // // // // //     }
+    
+// // // // // // // //     return baseAmount + overdueCharge + maintenanceTotal;
+// // // // // // // //   };
+
+// // // // // // // //   const totalAmount = calculateTotalAmount();
+
+// // // // // // // //   return (
+// // // // // // // //     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+// // // // // // // //       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col">
+// // // // // // // //         {/* Header */}
+// // // // // // // //         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+// // // // // // // //           <div className="flex justify-between items-center">
+// // // // // // // //             <h3 className="text-xl font-semibold text-gray-800">
+// // // // // // // //               Payment Confirmation
+// // // // // // // //             </h3>
+// // // // // // // //             <button 
+// // // // // // // //               onClick={onClose} 
+// // // // // // // //               className="text-gray-400 hover:text-gray-600 text-xl font-bold"
+// // // // // // // //               disabled={loading}
+// // // // // // // //             >
+// // // // // // // //               ✕
+// // // // // // // //             </button>
+// // // // // // // //           </div>
+// // // // // // // //           {/* <p className="text-sm text-gray-500 mt-1">
+// // // // // // // //             Booking #{bookingId}
+// // // // // // // //           </p>
+// // // // // // // //           {carData && (
+// // // // // // // //             <div className="mt-2 text-sm text-gray-600">
+// // // // // // // //               <p><strong>Car:</strong> {carData.carBrand} {carData.carModel}</p>
+// // // // // // // //               <p><strong>Client:</strong> {carData.rentalInfo?.userName || "N/A"}</p>
+// // // // // // // //               <p><strong>Total Amount:</strong> PKR {totalAmount.toLocaleString()}</p>
+// // // // // // // //             </div>
+// // // // // // // //           )} */}
+// // // // // // // //         </div>
+
+// // // // // // // //         {/* Payment Methods */}
+// // // // // // // //         <div className="px-6 py-5 space-y-3">
+// // // // // // // //           <h4 className="text-lg font-medium text-gray-800 mb-3">Select Payment Method</h4>
+          
+// // // // // // // //           {[
+// // // // // // // //             { value: "cash", label: "Cash Payment" },
+// // // // // // // //             { value: "card", label: "Credit/Debit Card" },
+// // // // // // // //             { value: "jazzcash", label: "JazzCash" },
+// // // // // // // //             { value: "easypaisa", label: "EasyPaisa" },
+// // // // // // // //             { value: "bank", label: "Bank Transfer" }
+// // // // // // // //           ].map((method) => (
+// // // // // // // //             <label
+// // // // // // // //               key={method.value}
+// // // // // // // //               className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-200"
+// // // // // // // //             >
+// // // // // // // //               <input
+// // // // // // // //                 type="radio"
+// // // // // // // //                 name="paymentMethod"
+// // // // // // // //                 value={method.value}
+// // // // // // // //                 checked={paymentMethod === method.value}
+// // // // // // // //                 onChange={() => setPaymentMethod(method.value)}
+// // // // // // // //                 className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+// // // // // // // //                 disabled={loading}
+// // // // // // // //               />
+// // // // // // // //               <span className="ml-3 text-gray-700 font-medium">
+// // // // // // // //                 {method.label}
+// // // // // // // //               </span>
+// // // // // // // //             </label>
+// // // // // // // //           ))}
+// // // // // // // //         </div>
+
+
+// // // // // // // //         {/* Footer */}
+// // // // // // // //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+// // // // // // // //           <button
+// // // // // // // //             onClick={onClose}
+// // // // // // // //             disabled={loading}
+// // // // // // // //             className="py-2 px-5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200 font-medium"
+// // // // // // // //           >
+// // // // // // // //             Cancel
+// // // // // // // //           </button>
+// // // // // // // //           <button
+// // // // // // // //             onClick={handleConfirm}
+// // // // // // // //             disabled={loading || !paymentMethod}
+// // // // // // // //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#C17D3C] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
+// // // // // // // //           >
+// // // // // // // //             {loading ? (
+// // // // // // // //               <>
+// // // // // // // //                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+// // // // // // // //                 Processing...
+// // // // // // // //               </>
+// // // // // // // //             ) : (
+// // // // // // // //               <>
+// // // // // // // //                 <span>✓</span>
+// // // // // // // //                 Confirm Payment Received
+// // // // // // // //               </>
+// // // // // // // //             )}
+// // // // // // // //           </button>
+// // // // // // // //         </div>
+// // // // // // // //       </div>
+// // // // // // // //     </div>
+// // // // // // // //   );
+// // // // // // // // };
+
+// // // // // // // // export default PaymentReceivedDialog;
+
 // // // // // // // import React, { useState } from "react";
 // // // // // // // import axios from "axios";
 // // // // // // // import Toast from "../Toast";
@@ -12,12 +197,12 @@
 // // // // // // //     if (!value) return "";
     
 // // // // // // //     const methodMap = {
-// // // // // // //       'cash': 'cash',
-// // // // // // //       'card': 'card', 
-// // // // // // //       'bank': 'bank',
-// // // // // // //       'bank transfer': 'bank',
-// // // // // // //       'jazzcash': 'jazzcash',
-// // // // // // //       'easypaisa': 'easypaisa'
+// // // // // // //       'cash': 'Cash',
+// // // // // // //       'card': 'Card', 
+// // // // // // //       'bank': 'Bank Transfer',
+// // // // // // //       'bank transfer': 'Bank Transfer',
+// // // // // // //       'jazzcash': 'JazzCash',
+// // // // // // //       'easypaisa': 'EasyPaisa'
 // // // // // // //     };
     
 // // // // // // //     return methodMap[value.toLowerCase()] || value;
@@ -33,6 +218,8 @@
 // // // // // // //       setLoading(true);
 // // // // // // //       const method = normalizePaymentMethod(paymentMethod);
 
+// // // // // // //       console.log("📤 Confirming payment for booking:", bookingId, "with method:", method);
+
 // // // // // // //       // ✅ USE THE CONFIRM-PAYMENT ENDPOINT
 // // // // // // //       const response = await axios.post(
 // // // // // // //         `${Base_Url}/api/payments/confirm-payment`,
@@ -42,6 +229,8 @@
 // // // // // // //         },
 // // // // // // //         { withCredentials: true }
 // // // // // // //       );
+
+// // // // // // //       console.log("✅ Payment confirmation response:", response.data);
 
 // // // // // // //       if (response.data.success) {
 // // // // // // //         Toast("Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.", "success");
@@ -56,7 +245,7 @@
 // // // // // // //         throw new Error(response.data.message || "Payment confirmation failed");
 // // // // // // //       }
 // // // // // // //     } catch (err) {
-// // // // // // //       console.error("Payment confirmation error:", err);
+// // // // // // //       console.error("❌ Payment confirmation error:", err);
 // // // // // // //       Toast(
 // // // // // // //         err.response?.data?.message || err.message || "Failed to confirm payment",
 // // // // // // //         "error"
@@ -105,16 +294,15 @@
 // // // // // // //               ✕
 // // // // // // //             </button>
 // // // // // // //           </div>
-// // // // // // //           {/* <p className="text-sm text-gray-500 mt-1">
-// // // // // // //             Booking #{bookingId}
+// // // // // // //           <p className="text-sm text-gray-500 mt-1">
+// // // // // // //             Booking #{bookingId?.slice(-8)}
 // // // // // // //           </p>
 // // // // // // //           {carData && (
 // // // // // // //             <div className="mt-2 text-sm text-gray-600">
 // // // // // // //               <p><strong>Car:</strong> {carData.carBrand} {carData.carModel}</p>
-// // // // // // //               <p><strong>Client:</strong> {carData.rentalInfo?.userName || "N/A"}</p>
 // // // // // // //               <p><strong>Total Amount:</strong> PKR {totalAmount.toLocaleString()}</p>
 // // // // // // //             </div>
-// // // // // // //           )} */}
+// // // // // // //           )}
 // // // // // // //         </div>
 
 // // // // // // //         {/* Payment Methods */}
@@ -148,7 +336,6 @@
 // // // // // // //           ))}
 // // // // // // //         </div>
 
-
 // // // // // // //         {/* Footer */}
 // // // // // // //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
 // // // // // // //           <button
@@ -161,7 +348,7 @@
 // // // // // // //           <button
 // // // // // // //             onClick={handleConfirm}
 // // // // // // //             disabled={loading || !paymentMethod}
-// // // // // // //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#C17D3C] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
+// // // // // // //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#B06F35] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
 // // // // // // //           >
 // // // // // // //             {loading ? (
 // // // // // // //               <>
@@ -227,7 +414,12 @@
 // // // // // //           bookingId: bookingId,
 // // // // // //           paymentMethod: method 
 // // // // // //         },
-// // // // // //         { withCredentials: true }
+// // // // // //         { 
+// // // // // //           withCredentials: true,
+// // // // // //           headers: {
+// // // // // //             'Content-Type': 'application/json'
+// // // // // //           }
+// // // // // //         }
 // // // // // //       );
 
 // // // // // //       console.log("✅ Payment confirmation response:", response.data);
@@ -246,10 +438,29 @@
 // // // // // //       }
 // // // // // //     } catch (err) {
 // // // // // //       console.error("❌ Payment confirmation error:", err);
-// // // // // //       Toast(
-// // // // // //         err.response?.data?.message || err.message || "Failed to confirm payment",
-// // // // // //         "error"
-// // // // // //       );
+// // // // // //       console.error("Error response:", err.response?.data);
+// // // // // //       console.error("Error status:", err.response?.status);
+      
+// // // // // //       let errorMessage = "Failed to confirm payment";
+      
+// // // // // //       if (err.response?.data?.message) {
+// // // // // //         errorMessage = err.response.data.message;
+// // // // // //       } else if (err.response?.data?.error) {
+// // // // // //         errorMessage = err.response.data.error;
+// // // // // //       } else if (err.message) {
+// // // // // //         errorMessage = err.message;
+// // // // // //       }
+      
+// // // // // //       // Specific error handling
+// // // // // //       if (err.response?.status === 401) {
+// // // // // //         errorMessage = "Please login again";
+// // // // // //       } else if (err.response?.status === 403) {
+// // // // // //         errorMessage = "Showroom not approved for payments";
+// // // // // //       } else if (err.response?.status === 404) {
+// // // // // //         errorMessage = "Booking not found";
+// // // // // //       }
+      
+// // // // // //       Toast(errorMessage, "error");
 // // // // // //     } finally {
 // // // // // //       setLoading(false);
 // // // // // //     }
@@ -618,7 +829,6 @@
 
 // // // //       console.log("📤 Confirming payment for booking:", bookingId, "with method:", method);
 
-// // // //       // ✅ USE THE CONFIRM-PAYMENT ENDPOINT
 // // // //       const response = await axios.post(
 // // // //         `${Base_Url}/api/payments/confirm-payment`,
 // // // //         { 
@@ -638,7 +848,6 @@
 // // // //       if (response.data.success) {
 // // // //         Toast("Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.", "success");
         
-// // // //         // Call the callback to refresh the parent component
 // // // //         if (onPaymentSuccess) {
 // // // //           onPaymentSuccess();
 // // // //         }
@@ -649,8 +858,6 @@
 // // // //       }
 // // // //     } catch (err) {
 // // // //       console.error("❌ Payment confirmation error:", err);
-// // // //       console.error("Error response:", err.response?.data);
-// // // //       console.error("Error status:", err.response?.status);
       
 // // // //       let errorMessage = "Failed to confirm payment";
       
@@ -662,22 +869,12 @@
 // // // //         errorMessage = err.message;
 // // // //       }
       
-// // // //       // Specific error handling
-// // // //       if (err.response?.status === 401) {
-// // // //         errorMessage = "Please login again";
-// // // //       } else if (err.response?.status === 403) {
-// // // //         errorMessage = "Showroom not approved for payments";
-// // // //       } else if (err.response?.status === 404) {
-// // // //         errorMessage = "Booking not found";
-// // // //       }
-      
 // // // //       Toast(errorMessage, "error");
 // // // //     } finally {
 // // // //       setLoading(false);
 // // // //     }
 // // // //   };
 
-// // // //   // Calculate total amount from carData
 // // // //   const calculateTotalAmount = () => {
 // // // //     if (!carData?.rentalInfo) return 0;
     
@@ -702,7 +899,6 @@
 // // // //   return (
 // // // //     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
 // // // //       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col">
-// // // //         {/* Header */}
 // // // //         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
 // // // //           <div className="flex justify-between items-center">
 // // // //             <h3 className="text-xl font-semibold text-gray-800">
@@ -727,7 +923,6 @@
 // // // //           )}
 // // // //         </div>
 
-// // // //         {/* Payment Methods */}
 // // // //         <div className="px-6 py-5 space-y-3">
 // // // //           <h4 className="text-lg font-medium text-gray-800 mb-3">Select Payment Method</h4>
           
@@ -758,7 +953,6 @@
 // // // //           ))}
 // // // //         </div>
 
-// // // //         {/* Footer */}
 // // // //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
 // // // //           <button
 // // // //             onClick={onClose}
@@ -792,6 +986,7 @@
 
 // // // // export default PaymentReceivedDialog;
 
+
 // // // import React, { useState } from "react";
 // // // import axios from "axios";
 // // // import Toast from "../Toast";
@@ -801,6 +996,7 @@
 // // // const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }) => {
 // // //   const [paymentMethod, setPaymentMethod] = useState("");
 // // //   const [loading, setLoading] = useState(false);
+// // //   const [downloadLoading, setDownloadLoading] = useState(false);
 
 // // //   const normalizePaymentMethod = (value) => {
 // // //     if (!value) return "";
@@ -817,6 +1013,35 @@
 // // //     return methodMap[value.toLowerCase()] || value;
 // // //   };
 
+// // //   // ✅ AUTOMATIC INVOICE DOWNLOAD FUNCTION
+// // //   const downloadUpdatedInvoice = async (invoiceUrl, bookingId) => {
+// // //     try {
+// // //       setDownloadLoading(true);
+// // //       console.log('📥 Downloading updated invoice...', invoiceUrl);
+      
+// // //       if (invoiceUrl) {
+// // //         // Direct download approach
+// // //         const link = document.createElement("a");
+// // //         link.href = invoiceUrl;
+// // //         link.setAttribute("download", `invoice_paid_${bookingId}.pdf`);
+// // //         link.setAttribute("target", "_blank");
+// // //         document.body.appendChild(link);
+// // //         link.click();
+// // //         document.body.removeChild(link);
+        
+// // //         Toast("✅ Updated invoice downloaded with PAID stamp!", "success");
+// // //       } else {
+// // //         Toast("Invoice URL not available", "error");
+// // //       }
+// // //     } catch (error) {
+// // //       console.error("❌ Invoice download error:", error);
+// // //       Toast("Failed to download invoice", "error");
+// // //     } finally {
+// // //       setDownloadLoading(false);
+// // //     }
+// // //   };
+
+// // //   // ✅ ENHANCED PAYMENT CONFIRMATION WITH AUTO-DOWNLOAD
 // // //   const handleConfirm = async () => {
 // // //     if (!paymentMethod) {
 // // //       Toast("Please select a payment method", "error");
@@ -846,13 +1071,31 @@
 // // //       console.log("✅ Payment confirmation response:", response.data);
 
 // // //       if (response.data.success) {
-// // //         Toast("Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.", "success");
+// // //         const successMessage = "Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.";
+// // //         Toast(successMessage, "success");
         
+// // //         // ✅ AUTOMATICALLY DOWNLOAD UPDATED INVOICE
+// // //         if (response.data.data?.invoice) {
+// // //           // Wait for invoice generation to complete
+// // //           setTimeout(() => {
+// // //             // Get the updated invoice URL from response or generate it
+// // //             const invoiceUrl = response.data.data.invoice.invoiceUrl || 
+// // //                              `http://localhost:3000/invoices/invoice_${bookingId}_paid.pdf`;
+            
+// // //             downloadUpdatedInvoice(invoiceUrl, bookingId);
+// // //           }, 2000);
+// // //         }
+
+// // //         // Call the callback to refresh the parent component
 // // //         if (onPaymentSuccess) {
 // // //           onPaymentSuccess();
 // // //         }
         
-// // //         onClose();
+// // //         // Close dialog after download
+// // //         setTimeout(() => {
+// // //           onClose();
+// // //         }, 3000);
+        
 // // //       } else {
 // // //         throw new Error(response.data.message || "Payment confirmation failed");
 // // //       }
@@ -899,6 +1142,7 @@
 // // //   return (
 // // //     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
 // // //       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col">
+// // //         {/* Header */}
 // // //         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
 // // //           <div className="flex justify-between items-center">
 // // //             <h3 className="text-xl font-semibold text-gray-800">
@@ -907,7 +1151,7 @@
 // // //             <button 
 // // //               onClick={onClose} 
 // // //               className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-// // //               disabled={loading}
+// // //               disabled={loading || downloadLoading}
 // // //             >
 // // //               ✕
 // // //             </button>
@@ -923,6 +1167,7 @@
 // // //           )}
 // // //         </div>
 
+// // //         {/* Payment Methods */}
 // // //         <div className="px-6 py-5 space-y-3">
 // // //           <h4 className="text-lg font-medium text-gray-800 mb-3">Select Payment Method</h4>
           
@@ -944,7 +1189,7 @@
 // // //                 checked={paymentMethod === method.value}
 // // //                 onChange={() => setPaymentMethod(method.value)}
 // // //                 className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-// // //                 disabled={loading}
+// // //                 disabled={loading || downloadLoading}
 // // //               />
 // // //               <span className="ml-3 text-gray-700 font-medium">
 // // //                 {method.label}
@@ -953,17 +1198,30 @@
 // // //           ))}
 // // //         </div>
 
+// // //         {/* ✅ DOWNLOAD STATUS MESSAGE */}
+// // //         {(loading || downloadLoading) && (
+// // //           <div className="px-6 py-3 bg-blue-50 border-t border-blue-200">
+// // //             <div className="flex items-center justify-center space-x-2">
+// // //               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+// // //               <span className="text-blue-700 text-sm font-medium">
+// // //                 {downloadLoading ? "Downloading updated invoice with PAID stamp..." : "Processing payment..."}
+// // //               </span>
+// // //             </div>
+// // //           </div>
+// // //         )}
+
+// // //         {/* Footer */}
 // // //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
 // // //           <button
 // // //             onClick={onClose}
-// // //             disabled={loading}
+// // //             disabled={loading || downloadLoading}
 // // //             className="py-2 px-5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200 font-medium"
 // // //           >
 // // //             Cancel
 // // //           </button>
 // // //           <button
 // // //             onClick={handleConfirm}
-// // //             disabled={loading || !paymentMethod}
+// // //             disabled={loading || downloadLoading || !paymentMethod}
 // // //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#B06F35] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
 // // //           >
 // // //             {loading ? (
@@ -974,10 +1232,17 @@
 // // //             ) : (
 // // //               <>
 // // //                 <span>✓</span>
-// // //                 Confirm Payment Received
+// // //                 Confirm Payment & Download Invoice
 // // //               </>
 // // //             )}
 // // //           </button>
+// // //         </div>
+
+// // //         {/* ✅ DOWNLOAD INFO MESSAGE */}
+// // //         <div className="bg-green-50 px-6 py-3 border-t border-green-200">
+// // //           <p className="text-green-700 text-sm text-center">
+// // //             <strong>Note:</strong> Updated invoice with <span className="text-red-600 font-bold">RED PAID</span> stamp will automatically download after payment confirmation
+// // //           </p>
 // // //         </div>
 // // //       </div>
 // // //     </div>
@@ -986,17 +1251,16 @@
 
 // // // export default PaymentReceivedDialog;
 
-
 // // import React, { useState } from "react";
 // // import axios from "axios";
 // // import Toast from "../Toast";
+// // import { FiDollarSign } from "react-icons/fi";
 
 // // const Base_Url = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 // // const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }) => {
 // //   const [paymentMethod, setPaymentMethod] = useState("");
 // //   const [loading, setLoading] = useState(false);
-// //   const [downloadLoading, setDownloadLoading] = useState(false);
 
 // //   const normalizePaymentMethod = (value) => {
 // //     if (!value) return "";
@@ -1013,35 +1277,7 @@
 // //     return methodMap[value.toLowerCase()] || value;
 // //   };
 
-// //   // ✅ AUTOMATIC INVOICE DOWNLOAD FUNCTION
-// //   const downloadUpdatedInvoice = async (invoiceUrl, bookingId) => {
-// //     try {
-// //       setDownloadLoading(true);
-// //       console.log('📥 Downloading updated invoice...', invoiceUrl);
-      
-// //       if (invoiceUrl) {
-// //         // Direct download approach
-// //         const link = document.createElement("a");
-// //         link.href = invoiceUrl;
-// //         link.setAttribute("download", `invoice_paid_${bookingId}.pdf`);
-// //         link.setAttribute("target", "_blank");
-// //         document.body.appendChild(link);
-// //         link.click();
-// //         document.body.removeChild(link);
-        
-// //         Toast("✅ Updated invoice downloaded with PAID stamp!", "success");
-// //       } else {
-// //         Toast("Invoice URL not available", "error");
-// //       }
-// //     } catch (error) {
-// //       console.error("❌ Invoice download error:", error);
-// //       Toast("Failed to download invoice", "error");
-// //     } finally {
-// //       setDownloadLoading(false);
-// //     }
-// //   };
-
-// //   // ✅ ENHANCED PAYMENT CONFIRMATION WITH AUTO-DOWNLOAD
+// //   // ✅ PAYMENT CONFIRMATION WITHOUT AUTO-DOWNLOAD
 // //   const handleConfirm = async () => {
 // //     if (!paymentMethod) {
 // //       Toast("Please select a payment method", "error");
@@ -1074,27 +1310,13 @@
 // //         const successMessage = "Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.";
 // //         Toast(successMessage, "success");
         
-// //         // ✅ AUTOMATICALLY DOWNLOAD UPDATED INVOICE
-// //         if (response.data.data?.invoice) {
-// //           // Wait for invoice generation to complete
-// //           setTimeout(() => {
-// //             // Get the updated invoice URL from response or generate it
-// //             const invoiceUrl = response.data.data.invoice.invoiceUrl || 
-// //                              `http://localhost:3000/invoices/invoice_${bookingId}_paid.pdf`;
-            
-// //             downloadUpdatedInvoice(invoiceUrl, bookingId);
-// //           }, 2000);
-// //         }
-
 // //         // Call the callback to refresh the parent component
 // //         if (onPaymentSuccess) {
 // //           onPaymentSuccess();
 // //         }
         
-// //         // Close dialog after download
-// //         setTimeout(() => {
-// //           onClose();
-// //         }, 3000);
+// //         // Close dialog immediately
+// //         onClose();
         
 // //       } else {
 // //         throw new Error(response.data.message || "Payment confirmation failed");
@@ -1151,7 +1373,7 @@
 // //             <button 
 // //               onClick={onClose} 
 // //               className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-// //               disabled={loading || downloadLoading}
+// //               disabled={loading}
 // //             >
 // //               ✕
 // //             </button>
@@ -1189,7 +1411,7 @@
 // //                 checked={paymentMethod === method.value}
 // //                 onChange={() => setPaymentMethod(method.value)}
 // //                 className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-// //                 disabled={loading || downloadLoading}
+// //                 disabled={loading}
 // //               />
 // //               <span className="ml-3 text-gray-700 font-medium">
 // //                 {method.label}
@@ -1198,13 +1420,13 @@
 // //           ))}
 // //         </div>
 
-// //         {/* ✅ DOWNLOAD STATUS MESSAGE */}
-// //         {(loading || downloadLoading) && (
+// //         {/* ✅ LOADING STATUS MESSAGE */}
+// //         {loading && (
 // //           <div className="px-6 py-3 bg-blue-50 border-t border-blue-200">
 // //             <div className="flex items-center justify-center space-x-2">
 // //               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
 // //               <span className="text-blue-700 text-sm font-medium">
-// //                 {downloadLoading ? "Downloading updated invoice with PAID stamp..." : "Processing payment..."}
+// //                 Processing payment...
 // //               </span>
 // //             </div>
 // //           </div>
@@ -1214,14 +1436,14 @@
 // //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
 // //           <button
 // //             onClick={onClose}
-// //             disabled={loading || downloadLoading}
+// //             disabled={loading}
 // //             className="py-2 px-5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200 font-medium"
 // //           >
 // //             Cancel
 // //           </button>
 // //           <button
 // //             onClick={handleConfirm}
-// //             disabled={loading || downloadLoading || !paymentMethod}
+// //             disabled={loading || !paymentMethod}
 // //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#B06F35] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
 // //           >
 // //             {loading ? (
@@ -1231,17 +1453,240 @@
 // //               </>
 // //             ) : (
 // //               <>
-// //                 <span>✓</span>
-// //                 Confirm Payment & Download Invoice
+// //                 <FiDollarSign className="h-4 w-4" />
+// //                 Confirm Payment
 // //               </>
 // //             )}
 // //           </button>
 // //         </div>
 
-// //         {/* ✅ DOWNLOAD INFO MESSAGE */}
+// //         {/* ✅ SUCCESS INFO MESSAGE */}
 // //         <div className="bg-green-50 px-6 py-3 border-t border-green-200">
 // //           <p className="text-green-700 text-sm text-center">
-// //             <strong>Note:</strong> Updated invoice with <span className="text-red-600 font-bold">RED PAID</span> stamp will automatically download after payment confirmation
+// //             <strong>Note:</strong> Invoice will be updated with <span className="text-red-600 font-bold">PAID</span> status and can be downloaded later from the dashboard
+// //           </p>
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+// // };
+
+// // export default PaymentReceivedDialog;
+
+// // // components/PaymentReceivedDialog.jsx
+// // import React, { useState } from "react";
+// // import axios from "axios";
+// // import Toast from "../Toast";
+// // import { FiDollarSign } from "react-icons/fi";
+
+// // const Base_Url = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// // const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }) => {
+// //   const [paymentMethod, setPaymentMethod] = useState("");
+// //   const [loading, setLoading] = useState(false);
+
+// //   const normalizePaymentMethod = (value) => {
+// //     if (!value) return "";
+    
+// //     const methodMap = {
+// //       'cash': 'Cash',
+// //       'card': 'Card', 
+// //       'bank': 'Bank Transfer',
+// //       'bank transfer': 'Bank Transfer',
+// //       'jazzcash': 'JazzCash',
+// //       'easypaisa': 'EasyPaisa'
+// //     };
+    
+// //     return methodMap[value.toLowerCase()] || value;
+// //   };
+
+// //   // ✅ UPDATED: PAYMENT CONFIRMATION WITH HISTORY
+// //   const handleConfirm = async () => {
+// //     if (!paymentMethod) {
+// //       Toast("Please select a payment method", "error");
+// //       return;
+// //     }
+
+// //     try {
+// //       setLoading(true);
+// //       const method = normalizePaymentMethod(paymentMethod);
+
+// //       console.log("📤 Confirming payment for booking:", bookingId, "with method:", method);
+
+// //       const response = await axios.post(
+// //         `${Base_Url}/api/payments/confirm-payment`,
+// //         { 
+// //           bookingId: bookingId,
+// //           paymentMethod: method 
+// //         },
+// //         { 
+// //           withCredentials: true,
+// //           headers: {
+// //             'Content-Type': 'application/json'
+// //           }
+// //         }
+// //       );
+
+// //       console.log("✅ Payment confirmation response:", response.data);
+
+// //       if (response.data.success) {
+// //         const successMessage = "Payment confirmed successfully! Transaction recorded in history.";
+// //         Toast(successMessage, "success");
+        
+// //         // Call the callback to refresh the parent component
+// //         if (onPaymentSuccess) {
+// //           onPaymentSuccess();
+// //         }
+        
+// //         // Close dialog immediately
+// //         onClose();
+        
+// //       } else {
+// //         throw new Error(response.data.message || "Payment confirmation failed");
+// //       }
+// //     } catch (err) {
+// //       console.error("❌ Payment confirmation error:", err);
+      
+// //       let errorMessage = "Failed to confirm payment";
+      
+// //       if (err.response?.data?.message) {
+// //         errorMessage = err.response.data.message;
+// //       } else if (err.response?.data?.error) {
+// //         errorMessage = err.response.data.error;
+// //       } else if (err.message) {
+// //         errorMessage = err.message;
+// //       }
+      
+// //       Toast(errorMessage, "error");
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   const calculateTotalAmount = () => {
+// //     if (!carData?.rentalInfo) return 0;
+    
+// //     const rentalInfo = carData.rentalInfo;
+// //     const baseAmount = rentalInfo.totalPrice || 0;
+// //     const overdueCharge = rentalInfo.overdueCharge || 0;
+// //     const maintenanceCost = rentalInfo.maintenanceCost || {};
+    
+// //     let maintenanceTotal = 0;
+// //     if (typeof maintenanceCost === 'object') {
+// //       maintenanceTotal = Object.values(maintenanceCost).reduce((sum, cost) => {
+// //         const costNum = parseFloat(cost) || 0;
+// //         return sum + costNum;
+// //       }, 0);
+// //     }
+    
+// //     return baseAmount + overdueCharge + maintenanceTotal;
+// //   };
+
+// //   const totalAmount = calculateTotalAmount();
+
+// //   return (
+// //     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+// //       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col">
+// //         {/* Header */}
+// //         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+// //           <div className="flex justify-between items-center">
+// //             <h3 className="text-xl font-semibold text-gray-800">
+// //               Payment Confirmation
+// //             </h3>
+// //             <button 
+// //               onClick={onClose} 
+// //               className="text-gray-400 hover:text-gray-600 text-xl font-bold"
+// //               disabled={loading}
+// //             >
+// //               ✕
+// //             </button>
+// //           </div>
+// //           <p className="text-sm text-gray-500 mt-1">
+// //             Booking #{bookingId?.slice(-8)}
+// //           </p>
+// //           {carData && (
+// //             <div className="mt-2 text-sm text-gray-600">
+// //               <p><strong>Car:</strong> {carData.carBrand} {carData.carModel}</p>
+// //               <p><strong>Total Amount:</strong> PKR {totalAmount.toLocaleString()}</p>
+// //             </div>
+// //           )}
+// //         </div>
+
+// //         {/* Payment Methods */}
+// //         <div className="px-6 py-5 space-y-3">
+// //           <h4 className="text-lg font-medium text-gray-800 mb-3">Select Payment Method</h4>
+          
+// //           {[
+// //             { value: "cash", label: "Cash Payment" },
+// //             { value: "card", label: "Credit/Debit Card" },
+// //             { value: "jazzcash", label: "JazzCash" },
+// //             { value: "easypaisa", label: "EasyPaisa" },
+// //             { value: "bank", label: "Bank Transfer" }
+// //           ].map((method) => (
+// //             <label
+// //               key={method.value}
+// //               className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-200"
+// //             >
+// //               <input
+// //                 type="radio"
+// //                 name="paymentMethod"
+// //                 value={method.value}
+// //                 checked={paymentMethod === method.value}
+// //                 onChange={() => setPaymentMethod(method.value)}
+// //                 className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+// //                 disabled={loading}
+// //               />
+// //               <span className="ml-3 text-gray-700 font-medium">
+// //                 {method.label}
+// //               </span>
+// //             </label>
+// //           ))}
+// //         </div>
+
+// //         {/* ✅ LOADING STATUS MESSAGE */}
+// //         {loading && (
+// //           <div className="px-6 py-3 bg-blue-50 border-t border-blue-200">
+// //             <div className="flex items-center justify-center space-x-2">
+// //               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+// //               <span className="text-blue-700 text-sm font-medium">
+// //                 Processing payment...
+// //               </span>
+// //             </div>
+// //           </div>
+// //         )}
+
+// //         {/* Footer */}
+// //         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+// //           <button
+// //             onClick={onClose}
+// //             disabled={loading}
+// //             className="py-2 px-5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200 font-medium"
+// //           >
+// //             Cancel
+// //           </button>
+// //           <button
+// //             onClick={handleConfirm}
+// //             disabled={loading || !paymentMethod}
+// //             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#B06F35] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
+// //           >
+// //             {loading ? (
+// //               <>
+// //                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+// //                 Processing...
+// //               </>
+// //             ) : (
+// //               <>
+// //                 <FiDollarSign className="h-4 w-4" />
+// //                 Confirm Payment
+// //               </>
+// //             )}
+// //           </button>
+// //         </div>
+
+// //         {/* ✅ UPDATED SUCCESS INFO MESSAGE */}
+// //         <div className="bg-green-50 px-6 py-3 border-t border-green-200">
+// //           <p className="text-green-700 text-sm text-center">
+// //             <strong>Note:</strong> This transaction will be saved in payment history for future reference
 // //           </p>
 // //         </div>
 // //       </div>
@@ -1277,7 +1722,50 @@
 //     return methodMap[value.toLowerCase()] || value;
 //   };
 
-//   // ✅ PAYMENT CONFIRMATION WITHOUT AUTO-DOWNLOAD
+//   // ✅ CALCULATE MAINTENANCE COST FROM UNCHECKED ITEMS
+//   const calculateMaintenanceCost = () => {
+//     if (!carData?.maintenanceLogs || carData.maintenanceLogs.length === 0) {
+//       return { total: 0, items: [] };
+//     }
+
+//     const latestMaintenanceLog = carData.maintenanceLogs[carData.maintenanceLogs.length - 1];
+    
+//     if (!latestMaintenanceLog?.tasks || !latestMaintenanceLog?.repairCosts) {
+//       return { total: 0, items: [] };
+//     }
+
+//     let maintenanceTotal = 0;
+//     const maintenanceItems = [];
+
+//     // Get tasks object (first element of array)
+//     const tasks = Array.isArray(latestMaintenanceLog.tasks) ? latestMaintenanceLog.tasks[0] : latestMaintenanceLog.tasks;
+//     const repairCosts = Array.isArray(latestMaintenanceLog.repairCosts) ? latestMaintenanceLog.repairCosts[0] : latestMaintenanceLog.repairCosts;
+//     const repairDescriptions = Array.isArray(latestMaintenanceLog.repairDescriptions) ? latestMaintenanceLog.repairDescriptions[0] : latestMaintenanceLog.repairDescriptions;
+
+//     // Process only UNCHECKED items (items that needed repair)
+//     if (tasks && repairCosts) {
+//       Object.entries(tasks).forEach(([item, isChecked]) => {
+//         // Only include UNCHECKED items (items that were not okay and needed repair)
+//         if (!isChecked) {
+//           const cost = parseFloat(repairCosts[item]) || 0;
+//           if (cost > 0) {
+//             maintenanceTotal += cost;
+//             const description = repairDescriptions?.[item] || 
+//                               item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1');
+            
+//             maintenanceItems.push({
+//               description,
+//               cost: cost
+//             });
+//           }
+//         }
+//       });
+//     }
+
+//     return { total: maintenanceTotal, items: maintenanceItems };
+//   };
+
+//   // ✅ UPDATED: PAYMENT CONFIRMATION WITH MAINTENANCE COST
 //   const handleConfirm = async () => {
 //     if (!paymentMethod) {
 //       Toast("Please select a payment method", "error");
@@ -1289,12 +1777,19 @@
 //       const method = normalizePaymentMethod(paymentMethod);
 
 //       console.log("📤 Confirming payment for booking:", bookingId, "with method:", method);
+//       console.log("🚗 Car data:", carData);
+
+//       // ✅ GET MAINTENANCE COST FROM UNCHECKED ITEMS
+//       const maintenanceData = calculateMaintenanceCost();
+//       console.log('💰 Maintenance cost from unchecked items:', maintenanceData);
 
 //       const response = await axios.post(
 //         `${Base_Url}/api/payments/confirm-payment`,
 //         { 
 //           bookingId: bookingId,
-//           paymentMethod: method 
+//           paymentMethod: method,
+//           maintenanceCost: maintenanceData.total, // Send maintenance cost to backend
+//           maintenanceItems: maintenanceData.items // Send maintenance items details
 //         },
 //         { 
 //           withCredentials: true,
@@ -1307,7 +1802,10 @@
 //       console.log("✅ Payment confirmation response:", response.data);
 
 //       if (response.data.success) {
-//         const successMessage = "Payment confirmed successfully! Invoice marked as paid, booking status updated, and car is now available.";
+//         const successMessage = maintenanceData.total > 0 
+//           ? `Payment confirmed successfully! Includes PKR ${maintenanceData.total.toLocaleString()} maintenance cost.`
+//           : "Payment confirmed successfully! Transaction recorded in history.";
+        
 //         Toast(successMessage, "success");
         
 //         // Call the callback to refresh the parent component
@@ -1340,26 +1838,24 @@
 //     }
 //   };
 
+//   // ✅ CALCULATE TOTAL AMOUNT WITH MAINTENANCE
 //   const calculateTotalAmount = () => {
 //     if (!carData?.rentalInfo) return 0;
     
 //     const rentalInfo = carData.rentalInfo;
 //     const baseAmount = rentalInfo.totalPrice || 0;
 //     const overdueCharge = rentalInfo.overdueCharge || 0;
-//     const maintenanceCost = rentalInfo.maintenanceCost || {};
     
-//     let maintenanceTotal = 0;
-//     if (typeof maintenanceCost === 'object') {
-//       maintenanceTotal = Object.values(maintenanceCost).reduce((sum, cost) => {
-//         const costNum = parseFloat(cost) || 0;
-//         return sum + costNum;
-//       }, 0);
-//     }
+//     // ✅ ADD MAINTENANCE COST FROM UNCHECKED ITEMS
+//     const maintenanceData = calculateMaintenanceCost();
     
-//     return baseAmount + overdueCharge + maintenanceTotal;
+//     return baseAmount + overdueCharge + maintenanceData.total;
 //   };
 
 //   const totalAmount = calculateTotalAmount();
+//   const maintenanceData = calculateMaintenanceCost();
+//   const rentalAmount = carData?.rentalInfo?.totalPrice || 0;
+//   const overdueAmount = carData?.rentalInfo?.overdueCharge || 0;
 
 //   return (
 //     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
@@ -1384,9 +1880,63 @@
 //           {carData && (
 //             <div className="mt-2 text-sm text-gray-600">
 //               <p><strong>Car:</strong> {carData.carBrand} {carData.carModel}</p>
-//               <p><strong>Total Amount:</strong> PKR {totalAmount.toLocaleString()}</p>
+//               <p><strong>Plate:</strong> {carData.plateNumber}</p>
 //             </div>
 //           )}
+//         </div>
+
+//         {/* Amount Breakdown */}
+//         <div className="px-6 py-4 bg-blue-50 border-b border-blue-200">
+//           <h4 className="text-lg font-medium text-gray-800 mb-3">Amount Breakdown</h4>
+          
+//           <div className="space-y-2 text-sm">
+//             {/* Rental Charges */}
+//             <div className="flex justify-between">
+//               <span>Rental Charges:</span>
+//               <span>PKR {rentalAmount.toLocaleString()}</span>
+//             </div>
+            
+//             {/* Overdue Charges */}
+//             {overdueAmount > 0 && (
+//               <div className="flex justify-between">
+//                 <span>Overdue Charges:</span>
+//                 <span className="text-orange-600">
+//                   PKR {overdueAmount.toLocaleString()}
+//                 </span>
+//               </div>
+//             )}
+            
+//             {/* Maintenance Charges from UNCHECKED ITEMS */}
+//             {maintenanceData.total > 0 && (
+//               <>
+//                 <div className="flex justify-between">
+//                   <span>Maintenance Charges:</span>
+//                   <span className="text-green-600">
+//                     PKR {maintenanceData.total.toLocaleString()}
+//                   </span>
+//                 </div>
+                
+//                 {/* Maintenance Items Details */}
+//                 <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+//                   <p className="font-medium text-green-800 text-xs mb-1">Repair Details:</p>
+//                   {maintenanceData.items.map((item, index) => (
+//                     <div key={index} className="flex justify-between text-xs">
+//                       <span className="text-green-700 truncate max-w-[200px]">• {item.description}</span>
+//                       <span className="text-green-700 whitespace-nowrap ml-2">PKR {item.cost.toLocaleString()}</span>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </>
+//             )}
+            
+//             {/* Total Amount */}
+//             {/* <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
+//               <span className="font-bold text-base">Total Amount:</span>
+//               <span className="font-bold text-[#C17D3C] text-base">
+//                 PKR {totalAmount.toLocaleString()}
+//               </span>
+//             </div> */}
+//           </div>
 //         </div>
 
 //         {/* Payment Methods */}
@@ -1460,233 +2010,12 @@
 //           </button>
 //         </div>
 
-//         {/* ✅ SUCCESS INFO MESSAGE */}
+//         {/* ✅ UPDATED SUCCESS INFO MESSAGE WITH MAINTENANCE */}
 //         <div className="bg-green-50 px-6 py-3 border-t border-green-200">
 //           <p className="text-green-700 text-sm text-center">
-//             <strong>Note:</strong> Invoice will be updated with <span className="text-red-600 font-bold">PAID</span> status and can be downloaded later from the dashboard
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default PaymentReceivedDialog;
-
-// // components/PaymentReceivedDialog.jsx
-// import React, { useState } from "react";
-// import axios from "axios";
-// import Toast from "../Toast";
-// import { FiDollarSign } from "react-icons/fi";
-
-// const Base_Url = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-// const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }) => {
-//   const [paymentMethod, setPaymentMethod] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   const normalizePaymentMethod = (value) => {
-//     if (!value) return "";
-    
-//     const methodMap = {
-//       'cash': 'Cash',
-//       'card': 'Card', 
-//       'bank': 'Bank Transfer',
-//       'bank transfer': 'Bank Transfer',
-//       'jazzcash': 'JazzCash',
-//       'easypaisa': 'EasyPaisa'
-//     };
-    
-//     return methodMap[value.toLowerCase()] || value;
-//   };
-
-//   // ✅ UPDATED: PAYMENT CONFIRMATION WITH HISTORY
-//   const handleConfirm = async () => {
-//     if (!paymentMethod) {
-//       Toast("Please select a payment method", "error");
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-//       const method = normalizePaymentMethod(paymentMethod);
-
-//       console.log("📤 Confirming payment for booking:", bookingId, "with method:", method);
-
-//       const response = await axios.post(
-//         `${Base_Url}/api/payments/confirm-payment`,
-//         { 
-//           bookingId: bookingId,
-//           paymentMethod: method 
-//         },
-//         { 
-//           withCredentials: true,
-//           headers: {
-//             'Content-Type': 'application/json'
-//           }
-//         }
-//       );
-
-//       console.log("✅ Payment confirmation response:", response.data);
-
-//       if (response.data.success) {
-//         const successMessage = "Payment confirmed successfully! Transaction recorded in history.";
-//         Toast(successMessage, "success");
-        
-//         // Call the callback to refresh the parent component
-//         if (onPaymentSuccess) {
-//           onPaymentSuccess();
-//         }
-        
-//         // Close dialog immediately
-//         onClose();
-        
-//       } else {
-//         throw new Error(response.data.message || "Payment confirmation failed");
-//       }
-//     } catch (err) {
-//       console.error("❌ Payment confirmation error:", err);
-      
-//       let errorMessage = "Failed to confirm payment";
-      
-//       if (err.response?.data?.message) {
-//         errorMessage = err.response.data.message;
-//       } else if (err.response?.data?.error) {
-//         errorMessage = err.response.data.error;
-//       } else if (err.message) {
-//         errorMessage = err.message;
-//       }
-      
-//       Toast(errorMessage, "error");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const calculateTotalAmount = () => {
-//     if (!carData?.rentalInfo) return 0;
-    
-//     const rentalInfo = carData.rentalInfo;
-//     const baseAmount = rentalInfo.totalPrice || 0;
-//     const overdueCharge = rentalInfo.overdueCharge || 0;
-//     const maintenanceCost = rentalInfo.maintenanceCost || {};
-    
-//     let maintenanceTotal = 0;
-//     if (typeof maintenanceCost === 'object') {
-//       maintenanceTotal = Object.values(maintenanceCost).reduce((sum, cost) => {
-//         const costNum = parseFloat(cost) || 0;
-//         return sum + costNum;
-//       }, 0);
-//     }
-    
-//     return baseAmount + overdueCharge + maintenanceTotal;
-//   };
-
-//   const totalAmount = calculateTotalAmount();
-
-//   return (
-//     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-//       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col">
-//         {/* Header */}
-//         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-//           <div className="flex justify-between items-center">
-//             <h3 className="text-xl font-semibold text-gray-800">
-//               Payment Confirmation
-//             </h3>
-//             <button 
-//               onClick={onClose} 
-//               className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-//               disabled={loading}
-//             >
-//               ✕
-//             </button>
-//           </div>
-//           <p className="text-sm text-gray-500 mt-1">
-//             Booking #{bookingId?.slice(-8)}
-//           </p>
-//           {carData && (
-//             <div className="mt-2 text-sm text-gray-600">
-//               <p><strong>Car:</strong> {carData.carBrand} {carData.carModel}</p>
-//               <p><strong>Total Amount:</strong> PKR {totalAmount.toLocaleString()}</p>
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Payment Methods */}
-//         <div className="px-6 py-5 space-y-3">
-//           <h4 className="text-lg font-medium text-gray-800 mb-3">Select Payment Method</h4>
-          
-//           {[
-//             { value: "cash", label: "Cash Payment" },
-//             { value: "card", label: "Credit/Debit Card" },
-//             { value: "jazzcash", label: "JazzCash" },
-//             { value: "easypaisa", label: "EasyPaisa" },
-//             { value: "bank", label: "Bank Transfer" }
-//           ].map((method) => (
-//             <label
-//               key={method.value}
-//               className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-200"
-//             >
-//               <input
-//                 type="radio"
-//                 name="paymentMethod"
-//                 value={method.value}
-//                 checked={paymentMethod === method.value}
-//                 onChange={() => setPaymentMethod(method.value)}
-//                 className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-//                 disabled={loading}
-//               />
-//               <span className="ml-3 text-gray-700 font-medium">
-//                 {method.label}
-//               </span>
-//             </label>
-//           ))}
-//         </div>
-
-//         {/* ✅ LOADING STATUS MESSAGE */}
-//         {loading && (
-//           <div className="px-6 py-3 bg-blue-50 border-t border-blue-200">
-//             <div className="flex items-center justify-center space-x-2">
-//               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-//               <span className="text-blue-700 text-sm font-medium">
-//                 Processing payment...
-//               </span>
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Footer */}
-//         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-//           <button
-//             onClick={onClose}
-//             disabled={loading}
-//             className="py-2 px-5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200 font-medium"
-//           >
-//             Cancel
-//           </button>
-//           <button
-//             onClick={handleConfirm}
-//             disabled={loading || !paymentMethod}
-//             className="py-2 px-5 text-white bg-[#C17D3C] rounded-lg hover:bg-[#B06F35] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors duration-200 font-medium"
-//           >
-//             {loading ? (
-//               <>
-//                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-//                 Processing...
-//               </>
-//             ) : (
-//               <>
-//                 <FiDollarSign className="h-4 w-4" />
-//                 Confirm Payment
-//               </>
-//             )}
-//           </button>
-//         </div>
-
-//         {/* ✅ UPDATED SUCCESS INFO MESSAGE */}
-//         <div className="bg-green-50 px-6 py-3 border-t border-green-200">
-//           <p className="text-green-700 text-sm text-center">
-//             <strong>Note:</strong> This transaction will be saved in payment history for future reference
+//             <strong>Note:</strong> {maintenanceData.total > 0 
+//               ? `This payment includes PKR ${maintenanceData.total.toLocaleString()} maintenance charges for repairs.`
+//               : "This transaction will be saved in payment history."}
 //           </p>
 //         </div>
 //       </div>
@@ -1838,7 +2167,7 @@ const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }
     }
   };
 
-  // ✅ CALCULATE TOTAL AMOUNT WITH MAINTENANCE
+  // ✅ CALCULATE TOTAL AMOUNT WITH MAINTENANCE (calculations still happen but not displayed)
   const calculateTotalAmount = () => {
     if (!carData?.rentalInfo) return 0;
     
@@ -1852,6 +2181,7 @@ const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }
     return baseAmount + overdueCharge + maintenanceData.total;
   };
 
+  // ✅ All calculations still happen internally but are not displayed
   const totalAmount = calculateTotalAmount();
   const maintenanceData = calculateMaintenanceCost();
   const rentalAmount = carData?.rentalInfo?.totalPrice || 0;
@@ -1883,60 +2213,6 @@ const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }
               <p><strong>Plate:</strong> {carData.plateNumber}</p>
             </div>
           )}
-        </div>
-
-        {/* Amount Breakdown */}
-        <div className="px-6 py-4 bg-blue-50 border-b border-blue-200">
-          <h4 className="text-lg font-medium text-gray-800 mb-3">Amount Breakdown</h4>
-          
-          <div className="space-y-2 text-sm">
-            {/* Rental Charges */}
-            <div className="flex justify-between">
-              <span>Rental Charges:</span>
-              <span>PKR {rentalAmount.toLocaleString()}</span>
-            </div>
-            
-            {/* Overdue Charges */}
-            {overdueAmount > 0 && (
-              <div className="flex justify-between">
-                <span>Overdue Charges:</span>
-                <span className="text-orange-600">
-                  PKR {overdueAmount.toLocaleString()}
-                </span>
-              </div>
-            )}
-            
-            {/* Maintenance Charges from UNCHECKED ITEMS */}
-            {maintenanceData.total > 0 && (
-              <>
-                <div className="flex justify-between">
-                  <span>Maintenance Charges:</span>
-                  <span className="text-green-600">
-                    PKR {maintenanceData.total.toLocaleString()}
-                  </span>
-                </div>
-                
-                {/* Maintenance Items Details */}
-                <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
-                  <p className="font-medium text-green-800 text-xs mb-1">Repair Details:</p>
-                  {maintenanceData.items.map((item, index) => (
-                    <div key={index} className="flex justify-between text-xs">
-                      <span className="text-green-700 truncate max-w-[200px]">• {item.description}</span>
-                      <span className="text-green-700 whitespace-nowrap ml-2">PKR {item.cost.toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-            
-            {/* Total Amount */}
-            {/* <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
-              <span className="font-bold text-base">Total Amount:</span>
-              <span className="font-bold text-[#C17D3C] text-base">
-                PKR {totalAmount.toLocaleString()}
-              </span>
-            </div> */}
-          </div>
         </div>
 
         {/* Payment Methods */}
@@ -2011,10 +2287,10 @@ const PaymentReceivedDialog = ({ bookingId, carData, onClose, onPaymentSuccess }
         </div>
 
         {/* ✅ UPDATED SUCCESS INFO MESSAGE WITH MAINTENANCE */}
-        <div className="bg-green-50 px-6 py-3 border-t border-green-200">
-          <p className="text-green-700 text-sm text-center">
+        <div className="bg-[#C17D3C] px-6 py-3 border-t border-[#C17D3C]">
+          <p className="text-[#C17D3C] text-sm text-center">
             <strong>Note:</strong> {maintenanceData.total > 0 
-              ? `This payment includes PKR ${maintenanceData.total.toLocaleString()} maintenance charges for repairs.`
+              ? `This payment includes maintenance charges for repairs.`
               : "This transaction will be saved in payment history."}
           </p>
         </div>

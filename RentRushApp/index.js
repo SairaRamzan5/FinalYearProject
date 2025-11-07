@@ -174,6 +174,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import { startAutoReturnService } from './services/autoReturnService.js';
 import { startBookingReminderService } from './services/notificationService.js';
 import ratingRoutes from './routes/ratings.js';
+import warningRoutes from './routes/warningRoutes.js';
 
 // ✅ IMPORT MODELS TO REGISTER THEM
 import "./Model/signup.js";
@@ -228,6 +229,7 @@ app.use("/uploads/complaints", express.static(path.join(process.cwd(), "uploads/
 app.use("/api/theft-report", theftReportRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use('/api/showrooms', ratingRoutes);
+app.use('/api/warnings', warningRoutes);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

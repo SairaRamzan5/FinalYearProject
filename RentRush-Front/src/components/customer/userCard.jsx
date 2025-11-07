@@ -1714,13 +1714,13 @@ const UserCard = ({ car, handleRefetch }) => {
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <button
           onClick={handleSubmit}
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+          className="px-6 py-3 bg-[#C17D3C] from-blue-600 to-indigo-600 hover:from-[#C17D3C] hover:to-[#C17D3C] text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center"
         >
           <FiCheckCircle className="mr-2" /> Confirm Booking
         </button>
         <button
           onClick={() => setModelVisible(false)}
-          className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+          className="px-6 py-3 bg-white from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-[#C17D3C] font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center"
         >
           <FiX className="mr-2" /> Cancel
         </button>
