@@ -11,7 +11,6 @@ const Base_Url = import.meta.env.VITE_API_URL;
 const ExploreCars = () => {
   const [cars, setCars] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("available");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -42,11 +41,7 @@ const ExploreCars = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     )
-    .filter((car) =>
-      filter === "available"
-        ? car.availability === "Available"
-        : car.availability !== "Available"
-    );
+    .filter((car) => car.availability === "Available"); // Only show available cars
 
   const handleBookNow = (carId) => {
     const token = localStorage.getItem('token');
@@ -104,37 +99,25 @@ const ExploreCars = () => {
           )}
         </div>
 
-        {/* Top Filters Section */}
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 px-6">
-          
-          {/* Dropdown Filter */}
-          <div className="relative w-full md:w-auto mb-4 md:mb-0">
-            <select
-              className="block w-full md:w-52 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="available">Available Cars</option>
-              <option value="all">All Cars</option>
-            </select>
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full md:w-96 mb-4 md:mb-0">
+        {/* Search Bar - Centered */}
+        <div className="max-w-4xl mx-auto mb-8 px-6">
+          <div className="relative">
             <input
               type="text"
               placeholder="Search by brand, model, color, or plate number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white border border-gray-300 text-gray-700 py-3 pl-6 pr-12 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
             />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-              <Search size={18} />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-5">
+              <Search size={22} className="text-gray-500" />
             </div>
           </div>
+        </div>
 
-          {/* Login/Signup Buttons for Guest Users */}
-          {/* {!localStorage.getItem('token') && (
+        {/* Login/Signup Buttons for Guest Users - Centered */}
+        {!localStorage.getItem('token') && (
+          <div className="max-w-7xl mx-auto flex justify-center mb-8 px-6">
             <div className="flex gap-4">
               <Link to="/login">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-full shadow-md font-semibold transition-colors">
@@ -147,8 +130,8 @@ const ExploreCars = () => {
                 </button>
               </Link>
             </div>
-          )} */}
-        </div>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (
@@ -185,12 +168,8 @@ const ExploreCars = () => {
                         e.target.src = '/src/assets/car-placeholder.jpg';
                       }}
                     />
-                    <div className={`absolute top-3 right-3 text-white px-2 py-1 rounded-full text-xs font-semibold ${
-                      car.availability === 'Available' ? 'bg-green-500' : 
-                      car.availability === 'Rented Out' ? 'bg-red-500' : 
-                      'bg-yellow-500'
-                    }`}>
-                      {car.availability || 'Available'}
+                    <div className="absolute top-3 right-3 text-white px-2 py-1 rounded-full text-xs font-semibold bg-green-500">
+                      Available
                     </div>
                   </div>
 
@@ -236,12 +215,6 @@ const ExploreCars = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
-                      {/* <button
-                        onClick={() => handleViewDetails(car._id)}
-                        className="flex-1 bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
-                      >
-                        View Details
-                      </button> */}
                       <button
                         onClick={() => handleBookNow(car._id)}
                         className="flex-1 bg-[#C17D3C] text-white py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
@@ -265,16 +238,14 @@ const ExploreCars = () => {
               <div className="text-6xl mb-4">🚗</div>
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
                 {searchTerm 
-                  ? "No cars found matching your search"
-                  : filter === "available"
-                    ? "No available cars found"
-                    : "No cars found"
+                  ? "No available cars found matching your search"
+                  : "No available cars found"
                 }
               </h3>
               <p className="text-gray-500">
                 {searchTerm 
-                  ? `No cars found for "${searchTerm}". Try different search terms.`
-                  : "Check back later for more cars."
+                  ? `No available cars found for "${searchTerm}". Try different search terms.`
+                  : "All cars are currently rented out. Please check back later."
                 }
               </p>
               {searchTerm && (

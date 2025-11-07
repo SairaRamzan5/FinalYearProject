@@ -100,7 +100,7 @@ function TheftReports() {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6 text-[#C17D3C]">
-        🚨 Theft Reports
+        Theft Reports
       </h2>
 
       {loading ? (

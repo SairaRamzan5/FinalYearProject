@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LogOut, 
-  Car, 
+  Warehouse, 
   Wrench, 
   CreditCard, 
   FileText, 
@@ -12,7 +12,8 @@ import {
   Calendar,
   History,
   ClipboardList,
-  User
+  User,
+  Car
 } from "lucide-react";
 
 function ShowroomNavbar({ onMenuClick }) {
@@ -55,8 +56,8 @@ function ShowroomNavbar({ onMenuClick }) {
   // Update profile data from session storage
   const updateProfileFromStorage = () => {
     const updatedData = {
-      showroomName: sessionStorage.getItem("showroomName") || "Showroom Owner",
-      name: sessionStorage.getItem("name") || "Showroom Owner",
+      showroomName: sessionStorage.getItem("showroomName") || "Showroom ",
+      name: sessionStorage.getItem("name") || "Showroom ",
       profilePicture: sessionStorage.getItem("profilePicture") || sessionStorage.getItem("logo") || ""
     };
     setProfileData(updatedData);
@@ -120,9 +121,9 @@ function ShowroomNavbar({ onMenuClick }) {
   // Updated dropdownItems with Notifications removed
   const dropdownItems = [
     { label: "Profile", path: "/showroom/profile", icon: User },
-    { label: "Inventory", path: "/showroom/inventory", icon: Car },
+    { label: "Inventory", path: "/showroom/inventory", icon: Warehouse },
     { label: "Bookings", path: "/showroom/bookings", icon: Calendar },
-    { label: "Car Returns", path: "/showroom/maintenance", icon: Wrench },
+    { label: "Car Returns", path: "/showroom/maintenance", icon: Car },
     { label: "Maintenance History", path: "/showroom/maintenance-history", icon: ClipboardList },
     { label: "Payment", path: "/showroom/payments", icon: CreditCard },
     { label: "Payment History", path: "/showroom/payment-history", icon: History },
