@@ -10,6 +10,8 @@
 // const CarMaintenancePage = () => {
 //   const [maintenanceSelectedCar, setMaintenanceSelectedCar] = useState(null);
 //   const [cars, setCars] = useState(null);
+//   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+//   const [selectedCarForConfirmation, setSelectedCarForConfirmation] = useState(null);
 
 //   const fetchVehicles = async () => {
 //     try {
@@ -36,7 +38,19 @@
 //   }, []);
 
 //   const handleMaintenanceCarSelect = (car) => {
-//     setMaintenanceSelectedCar(car);
+//     setSelectedCarForConfirmation(car);
+//     setShowConfirmationDialog(true);
+//   };
+
+//   const handleConfirmCarReturn = () => {
+//     setMaintenanceSelectedCar(selectedCarForConfirmation);
+//     setShowConfirmationDialog(false);
+//     setSelectedCarForConfirmation(null);
+//   };
+
+//   const handleCancelConfirmation = () => {
+//     setShowConfirmationDialog(false);
+//     setSelectedCarForConfirmation(null);
 //   };
 
 //   const handleCloseChecklist = () => {
@@ -49,7 +63,7 @@
 //       <ShowroomNavbar />
 //       <div className="p-8 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 min-h-screen">
 //         <h2 className="text-3xl font-bold text-center mb-8 text-[#0B132A]">
-//           {cars?.length > 0 ? "Cars for Maintenance" : "No Car for Maintenance"}
+//           {cars?.length > 0 ? "Confirm car is in your Hand" : "No returned cars"}
 //         </h2>
 //         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-3 justify-items-center">
 //           {cars?.map((car) => (
@@ -62,6 +76,50 @@
 //             </div>
 //           ))}
 //         </div>
+
+//         {/* Confirmation Dialog */}
+//         {showConfirmationDialog && (
+//           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+//             <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative text-center space-y-6">
+//               <h3 className="text-2xl font-bold text-[#0B132A]">
+//                 Confirm Car Return
+//               </h3>
+//               <p className="text-gray-700">
+//                 Are you sure that the car is back in your showroom. {" "}
+//                 <span className="font-semibold">
+//                   {selectedCarForConfirmation?.carBrand} {selectedCarForConfirmation?.carModel}
+//                 </span>
+//                 {" "}with plate number{" "}
+//                 <span className="font-semibold">
+//                   {selectedCarForConfirmation?.plateNumber}
+//                 </span>
+//                 ?
+//               </p>
+
+//               <div className="flex justify-center gap-4 mt-6">
+//                 <button
+//                   onClick={handleConfirmCarReturn}
+//                   className="py-2 px-6 bg-[#C17D3C] text-white rounded-lg hover:bg-[#B06D2C] transition-colors"
+//                 >
+//                   Confirm
+//                 </button>
+//                 <button
+//                   onClick={handleCancelConfirmation}
+//                   className="py-2 px-6 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+//                 >
+//                   Cancel
+//                 </button>
+//               </div>
+
+//               <button
+//                 onClick={handleCancelConfirmation}
+//                 className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+//               >
+//                 &times;
+//               </button>
+//             </div>
+//           </div>
+//         )}
 
 //         {maintenanceSelectedCar && (
 //           <CarMaintenanceChecklist
@@ -120,10 +178,32 @@ const CarMaintenancePage = () => {
     setShowConfirmationDialog(true);
   };
 
-  const handleConfirmCarReturn = () => {
-    setMaintenanceSelectedCar(selectedCarForConfirmation);
-    setShowConfirmationDialog(false);
-    setSelectedCarForConfirmation(null);
+  // ✅ UPDATE THIS FUNCTION - Add status update to "in-maintenance"
+  const handleConfirmCarReturn = async () => {
+    try {
+      // Update car status to "in-maintenance" on backend
+      await axios.put(
+        `${Base_Url}/api/car/update-car-status/${selectedCarForConfirmation._id}`,
+        { 
+          status: "in-maintenance",
+          availability: "In Maintenance"
+        },
+        { withCredentials: true }
+      );
+
+      // Update local state
+      setMaintenanceSelectedCar(selectedCarForConfirmation);
+      setShowConfirmationDialog(false);
+      setSelectedCarForConfirmation(null);
+      
+      Toast("Car status updated to in-maintenance", "success");
+      
+      // Refresh the car list
+      fetchVehicles();
+    } catch (error) {
+      console.error("Error updating car status:", error);
+      Toast("Failed to update car status", "error");
+    }
   };
 
   const handleCancelConfirmation = () => {
@@ -163,7 +243,8 @@ const CarMaintenancePage = () => {
                 Confirm Car Return
               </h3>
               <p className="text-gray-700">
-                Are you sure that the car is in your showroom. {" "}
+                Are you sure that the car is back in your showroom? This will update the status to{" "}
+                <span className="font-semibold text-[#C17D3C]">In-Maintenance</span> on customer side. {" "}
                 <span className="font-semibold">
                   {selectedCarForConfirmation?.carBrand} {selectedCarForConfirmation?.carModel}
                 </span>
@@ -179,7 +260,7 @@ const CarMaintenancePage = () => {
                   onClick={handleConfirmCarReturn}
                   className="py-2 px-6 bg-[#C17D3C] text-white rounded-lg hover:bg-[#B06D2C] transition-colors"
                 >
-                  Confirm
+                  Confirm & Start Maintenance
                 </button>
                 <button
                   onClick={handleCancelConfirmation}
@@ -211,4 +292,3 @@ const CarMaintenancePage = () => {
 };
 
 export default CarMaintenancePage;
-

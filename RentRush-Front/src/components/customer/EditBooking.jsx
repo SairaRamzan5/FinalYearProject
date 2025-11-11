@@ -136,7 +136,7 @@ const EditBookingModal = ({ booking, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-grey bg-opacity-10 z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md">
+      <div className="bg-white rounded-lg shadow-md p-6 w-11/12 max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Update Booking</h2>
           <button 
@@ -228,7 +228,7 @@ const EditBookingModal = ({ booking, isOpen, onClose }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50"
+              className="px-4 py-2 bg-[#C17D3C] text-white rounded-md hover:bg-[#C17D3C] transition disabled:opacity-50"
             >
               {isLoading ? "Updating..." : "Update Booking"}
             </button>
@@ -335,7 +335,7 @@ const EditBookingModal = ({ booking, isOpen, onClose }) => {
                 <button
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition disabled:opacity-50"
+                  className="px-4 py-2 bg-[#C17D3C] text-white rounded-md hover:bg-[#C17D3C] transition disabled:opacity-50"
                 >
                   {isLoading ? "Updating..." : "Confirm Update"}
                 </button>

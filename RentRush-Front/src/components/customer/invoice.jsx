@@ -154,7 +154,7 @@ const InvoiceDashboard = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="block w-full sm:w-40 pl-3 pr-10 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
               >
-                <option value="all">All Statuses</option>
+                <option value="all">All Invoices</option>
                 <option value="paid">Paid</option>
                 <option value="unpaid">Unpaid</option>
               </select>
