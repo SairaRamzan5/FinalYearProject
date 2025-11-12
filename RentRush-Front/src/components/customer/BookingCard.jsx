@@ -2852,7 +2852,7 @@ function BookingCard({
                 {/* Proof */}
                 <div>
                   <label className="font-bold text-gray-700">
-                    Proof (Attachment) *
+                    Proof (Attachment) 
                   </label>
                   <input
                     name="proof"
