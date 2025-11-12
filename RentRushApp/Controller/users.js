@@ -2825,7 +2825,7 @@ export const login = async (req, res) => {
       if (banStatus?.status === "banned") {
         return res.status(200).json({
           success: false,
-          message: "Your are banned.",
+          message: "You are banned.",
           role: user.role,
           showroomName: user.showroomName,
           logo: user.images[0],

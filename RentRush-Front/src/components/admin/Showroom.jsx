@@ -1450,7 +1450,7 @@ const Showroom = ({ value, refectch }) => {
                     {statuses[selectedShowroom._id] === "active"
                       ? activeBookingsCount[selectedShowroom._id] > 0
                         ? "Active Bookings"
-                        : "Ban"
+                        : "Deactivate"
                       : "Activate"}
                   </button>
                 )}
