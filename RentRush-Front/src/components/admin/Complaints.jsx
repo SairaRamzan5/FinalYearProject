@@ -1285,7 +1285,7 @@ const Complaints = () => {
       {view === "complaints" && (
         <button
           onClick={handleBackToShowrooms}
-          className="mb-4 px-4 py-2 bg-[#C17D3C] text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center"
+          className="mb-4 px-4 py-2 bg-[#C17D3C] text-white rounded-lg hover:bg-[#C17D3C] transition-colors flex items-center"
         >
           ← Back to Showrooms
         </button>
@@ -1485,18 +1485,18 @@ const Complaints = () => {
                         <div className="flex justify-center space-x-2">
                           <button
                             onClick={() => setSelectedComplaint(complaint)}
-                            className="px-3 py-1 bg-[#C17D3C] text-white rounded hover:bg-blue-700 transition-colors text-sm"
+                            className="px-3 py-1 bg-[#C17D3C] text-white rounded hover:bg-[#C17D3C] transition-colors text-sm"
                           >
                             View Details
                           </button>
-                          {!complaint.resolved && (
+                          {/* {!complaint.resolved && (
                             <button
                               onClick={() => openResolutionModal(complaint._id)}
                               className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
                             >
                               Resolve
                             </button>
-                          )}
+                          )} */}
                         </div>
                       </td>
                     </tr>
@@ -1729,14 +1729,14 @@ const Complaints = () => {
               >
                 Close
               </button>
-              {!selectedComplaint.resolved && (
+              {/* {!selectedComplaint.resolved && (
                 <button
                   onClick={() => openResolutionModal(selectedComplaint._id)}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Mark as Resolved
                 </button>
-              )}
+              )} */}
             </div>
           </div>
         </div>
